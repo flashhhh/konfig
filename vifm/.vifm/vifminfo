@@ -1,0 +1,137 @@
+# You can edit this file by hand, but it's recommended not to do that.
+
+# Bookmarks:
+'n
+	/home/flashhhh/Copy/RentSoft shared/Bugs (screenshots)/Release
+	2015-09-15_12-50-57.png
+1442486012
+'r
+	/server/rs
+	../
+1439889039
+'t
+	/tmp
+	../
+1438609956
+'w
+	/home/flashhhh/Copy/RentSoft shared
+	../
+1438608185
+'h
+	/home/flashhhh
+	../
+-1
+
+# Command line history (oldest to newest):
+:!cd bin
+:one
+:o
+:vsplit
+:view
+:rename сильпо.txt
+:ref
+:rename tmp.zip
+:file
+:find vim
+:find .ideavim
+:find .ideavimrc
+:op
+:bash
+:nmap = :open
+:nmap = :execute ':open'
+:nnoremap = :execute ':open'
+:map <F2> :echo 'Current time is ' . strftime('%c')<CR>
+:!map = :execute ':open'
+:map! = :execute ':open'
+:map! <F2> :execute ':open'
+:nmap <F2> :execute ':open'
+:nmap! <F2> :execute ':open'
+:map <F2> :execute ':open'
+:execute ':open'
+:map
+:wq
+:map <F2> :open
+:open
+:map <F2> :open<CR>
+:map <Enter> :open<CR>
+:map <Return> :open<CR>
+:map <ENTER> :open<CR>
+:mkdir Discuss
+:up
+:move Done
+:move ./Done/
+:refresh
+:sh
+:rename JurInvoice_en.png
+:rename JurInvoice_ru.png
+:ch
+:chmod 644
+:his
+:mive
+:move
+:w
+::sync
+:mkdir Done
+:cd /
+:syn
+:mkdir Later
+:mkdir konfig
+:sync
+:mkdir vifm
+:ln
+:q
+
+# Search history (oldest to newest):
+/ren
+/tmp
+/test
+/ssh
+/.vimf
+/.vifm
+/prog
+/ww
+/valevica
+/cron
+/src
+/sr
+/sv
+/srv
+/li
+/liu
+/task
+/!
+/velv
+/rel
+/etc
+/vel
+/usr
+/velvica
+/Crd
+/Cred
+/server
+/rs
+/sdd
+/\.fish
+/drop
+/vin
+/map <F2> :echo 'Current time is ' . strftime('%c')<CR>
+/stat
+/img
+/paype
+/hdd
+/bashrc
+/config
+/.vim/
+/vim\/
+/.vim
+/.conf
+/vim
+/bash
+/konf
+/\.conf
+/fish
+/vifm
+
+# Prompt history (oldest to newest):
+
+# Trash content:
