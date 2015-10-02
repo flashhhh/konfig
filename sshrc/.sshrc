@@ -33,6 +33,9 @@ if which git > /dev/null; then
     for dir in $(ls -d $PWD/*/); do
         cp -ap $dir/. $TMP_HOME
     done
+
+    cp -ap $HOME/.ssh $TMP_HOME
+
     export HOME=$TMP_HOME
 
     if which vim > /dev/null; then
