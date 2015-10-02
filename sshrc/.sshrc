@@ -1,39 +1,67 @@
+#!bash
 TMP_DIR=/tmp/konfig
+TMP_HOME=/tmp/konfig_home
 _pwd=$PWD
 NAME='konfig'
 
 echo "=== $NAME ==="
 
+
 if which git > /dev/null; then
     echo "Git is installed (`git --version`)"
     mkdir -p $TMP_DIR
     cd $TMP_DIR
+
     if ! git status > /dev/null 2>&1; then
         echo "$NAME is not installed. Downloading..."
+        cd /
+        rm -rf $TMP_DIR
         git clone https://github.com/flashhhh/konfig.git $TMP_DIR
-    elif [ $(git rev-parse @) != $(git rev-parse @{u}) ]; then
-        echo "$NAME version is outdated. Updating..."
-        git pull origin master
+        cd $TMP_DIR
+    else 
+        git fetch
+        if [ $(git fetch) $(git rev-parse @) != $(git rev-parse @{u}) ]; then
+            echo "$NAME version is outdated. Updating..."
+            git pull origin master
+        else
+            echo "$NAME is at the newest version!"
+        fi
+    fi
+
+    mkdir -p $TMP_HOME
+
+    for dir in $(ls -d $PWD/*/); do
+        cp -ap $dir/. $TMP_HOME
+    done
+    export HOME=$TMP_HOME
+
+    if which vim > /dev/null; then
+        echo "vim is installed (`vim --version 2>&1 | head -1`)."
     else
-        echo "$NAME is at the newest version!"
+        echo "vim is not installed!"
+    fi
+
+    if which vifm > /dev/null; then
+        echo "vifm is installed (`vifm --version 2>&1 | head -1`)."
+    else
+        echo "vifm is not installed!"
     fi
     
     if which fish > /dev/null; then
         echo "fish is installed (`fish --version 2>&1`). Going fish..."
-        #fish -c "
-        #    if not echo \$fish_function_path | grep $TMP_DIR > /dev/null
-        #        set -U fish_function_path $TMP_DIR/fish/functions \$fish_function_path
-        #    end
-        #"
-        fish -c "set -l fish_function_path $TMP_DIR/fish/functions \$fish_function_path;echo $fish_function_path; fish"
-        #exec fish
+        fish_is_installed="true"
     else
         echo "fish is not installed. Staying at bash."
+        source "$TMP_DIR/bash/.bashrc"
     fi
 else
     echo "Git isn't installed, couldn't download configs!"
 fi
 
 echo "=== /$NAME ==="
+echo
 
 cd $_pwd
+if [ $fish_is_installed == "true" ]; then
+    exec fish
+fi

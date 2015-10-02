@@ -59,7 +59,6 @@
 :move Done
 :move ./Done/
 :refresh
-:sh
 :rename JurInvoice_en.png
 :rename JurInvoice_ru.png
 :ch
@@ -80,6 +79,7 @@
 :mkdir fish
 :his
 :ln
+:sh
 :sync
 
 # Search history (oldest to newest):
@@ -131,10 +131,10 @@
 /\.conf
 /vifm
 /konfig
-/conf
-/fish
 /sta
 /konf
+/conf
+/fish
 
 # Prompt history (oldest to newest):
 
