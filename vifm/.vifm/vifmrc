@@ -130,3 +130,6 @@ set ic
 map <F2> :open<CR>
 map <F5> :move<CR>
 map <F6> :copy<CR>
+map <F7> :ln<CR>
+map <F9> :sh<CR>
+set statusline="F2 Open, F5 Move, F6 Copy, F7 Symlink, F9 Shell %= %t %s %A %u:%g"

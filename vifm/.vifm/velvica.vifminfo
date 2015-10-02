@@ -1,0 +1,27 @@
+# You can edit this file by hand, but it's recommended not to do that.
+
+# Bookmarks:
+'r
+	/srv/www/web/rs
+	../
+-1
+'t
+	/tmp
+	../
+-1
+'e
+	/etc/velvica/config
+	../
+-1
+'l
+	/var/log/velvica
+	../
+-1
+
+# Command line history (oldest to newest):
+
+# Search history (oldest to newest):
+
+# Prompt history (oldest to newest):
+
+# Trash content:

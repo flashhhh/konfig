@@ -43,6 +43,11 @@ if which git > /dev/null; then
 
     if which vifm > /dev/null; then
         echo "vifm is installed (`vifm --version 2>&1 | head -1`)."
+        for vifm_config in $TMP_HOME/.vifm/*.vifminfo; do
+            pattern=$(basename $vifm_config)
+            pattern=${bn%.*}
+            [[ $(hostname -f) =~ $pattern ]] && cp -ap $vifm_config $TMP_HOME/.vifm/vifminfo
+        done
     else
         echo "vifm is not installed!"
     fi

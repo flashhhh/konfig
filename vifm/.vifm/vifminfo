@@ -24,30 +24,12 @@
 
 # Command line history (oldest to newest):
 :!cd bin
-:vsplit
-:view
-:rename сильпо.txt
-:ref
-:rename tmp.zip
-:file
-:find vim
-:find .ideavim
-:find .ideavimrc
-:op
-:bash
-:nmap = :open
-:nmap = :execute ':open'
-:nnoremap = :execute ':open'
-:map <F2> :echo 'Current time is ' . strftime('%c')<CR>
-:!map = :execute ':open'
-:map! = :execute ':open'
 :map! <F2> :execute ':open'
 :nmap <F2> :execute ':open'
 :nmap! <F2> :execute ':open'
 :map <F2> :execute ':open'
 :execute ':open'
 :map
-:wq
 :map <F2> :open
 :open
 :map <F2> :open<CR>
@@ -65,7 +47,6 @@
 :chmod 644
 :mive
 :move
-:w
 ::sync
 :mkdir Done
 :cd /
@@ -77,10 +58,31 @@
 :mkdir .config
 :mkdir
 :mkdir fish
-:his
-:ln
-:sh
 :sync
+:his
+:sh
+:vim fish_right_prompt.fish
+:edit fish_right_prompt.fish
+:edit fish_greeting.fish
+:edit config.fish
+:cd ~
+:ln
+:echo statusline
+:echo $statusline
+:set statusline="test"
+:set statusline=""
+:set statusline="text %t"
+:set statusline="text %t %A"
+:set statusline="text %t %= %A"
+:set statusline="text %t %= %A %u:%g"
+:set statusline="text %t %= %s %E %A %u:%g"
+:set statusline="text %t %= %s %e %A %u:%g"
+:set statusline="text %t %= %s %A %u:%g"
+:set statusline="F2 Open, F5 Move, F6 Copy, F7 Symlink, F9 shell %t %= %s %A %u:%g"
+:set statusline="F2 Open, F5 Move, F6 Copy, F7 Symlink, F9 shell %= %t %s %A %u:%g"
+:w
+:set statusline="F2 Open, F5 Move, F6 Copy, F7 Symlink, F9 shell %= %t %s %A %u:%g"j
+:wq
 
 # Search history (oldest to newest):
 /ren
@@ -129,9 +131,9 @@
 /vim
 /bash
 /\.conf
-/vifm
 /konfig
 /sta
+/vifm
 /konf
 /conf
 /fish
