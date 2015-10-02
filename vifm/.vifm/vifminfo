@@ -24,8 +24,6 @@
 
 # Command line history (oldest to newest):
 :!cd bin
-:one
-:o
 :vsplit
 :view
 :rename сильпо.txt
@@ -66,7 +64,6 @@
 :rename JurInvoice_ru.png
 :ch
 :chmod 644
-:his
 :mive
 :move
 :w
@@ -76,10 +73,14 @@
 :syn
 :mkdir Later
 :mkdir konfig
-:sync
 :mkdir vifm
-:ln
 :q
+:mkdir .config
+:mkdir
+:mkdir fish
+:his
+:ln
+:sync
 
 # Search history (oldest to newest):
 /ren
@@ -127,10 +128,13 @@
 /.conf
 /vim
 /bash
-/konf
 /\.conf
-/fish
 /vifm
+/konfig
+/conf
+/fish
+/sta
+/konf
 
 # Prompt history (oldest to newest):
 

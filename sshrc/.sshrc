@@ -1,0 +1,39 @@
+TMP_DIR=/tmp/konfig
+_pwd=$PWD
+NAME='konfig'
+
+echo "=== $NAME ==="
+
+if which git > /dev/null; then
+    echo "Git is installed (`git --version`)"
+    mkdir -p $TMP_DIR
+    cd $TMP_DIR
+    if ! git status > /dev/null 2>&1; then
+        echo "$NAME is not installed. Downloading..."
+        git clone https://github.com/flashhhh/konfig.git $TMP_DIR
+    elif [ $(git rev-parse @) != $(git rev-parse @{u}) ]; then
+        echo "$NAME version is outdated. Updating..."
+        git pull origin master
+    else
+        echo "$NAME is at the newest version!"
+    fi
+    
+    if which fish > /dev/null; then
+        echo "fish is installed (`fish --version 2>&1`). Going fish..."
+        #fish -c "
+        #    if not echo \$fish_function_path | grep $TMP_DIR > /dev/null
+        #        set -U fish_function_path $TMP_DIR/fish/functions \$fish_function_path
+        #    end
+        #"
+        fish -c "set -l fish_function_path $TMP_DIR/fish/functions \$fish_function_path;echo $fish_function_path; fish"
+        #exec fish
+    else
+        echo "fish is not installed. Staying at bash."
+    fi
+else
+    echo "Git isn't installed, couldn't download configs!"
+fi
+
+echo "=== /$NAME ==="
+
+cd $_pwd
