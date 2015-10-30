@@ -117,3 +117,4 @@ fi
 alias sl="screen -list"
 alias sr="screen -r"
 alias rs="screen -dmS rs ~/Programs/realsync/realsync /server/rs"
+eval $(thefuck --alias)

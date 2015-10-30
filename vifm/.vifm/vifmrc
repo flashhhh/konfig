@@ -89,7 +89,7 @@ set timefmt=\ %m/%d\ %H:%M
 " %d the current directory name.
 " %D the other window directory name.
 " %m run the command in a menu window
-:com! ssh :execute ':! ~/Programs/.ssh-vifm %a && sshfs %a:/ /tmp/vifm-ssh/%a.mnt' | cd /tmp/vifm-ssh/%a.mnt
+:com! ssh :execute ':! bash -c "~/Programs/.ssh-vifm %a && sshfs %a:/ /tmp/vifm-ssh/%a.mnt"' | cd /tmp/vifm-ssh/%a.mnt
 :com! open xdg-open %c
 :com! ln !ln -s %d/%f %D
 
