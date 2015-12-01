@@ -30,7 +30,7 @@ if which git > /dev/null; then
 
     mkdir -p $TMP_HOME
 
-    for dir in $(ls -d $PWD/*/); do
+    for dir in $(ls -d $PWD/*/ | egrep -v "scripts|tmux"); do
         cp -ap $dir/. $TMP_HOME
     done
 
