@@ -117,3 +117,12 @@ fi
 alias sl="screen -list"
 alias sr="screen -r"
 alias rs="screen -dmS rs ~/Programs/realsync/realsync /server/rs"
+if [ -d ~/konfig ]; then
+    export KONFIG_DIR=~/konfig
+fi
+if [ -d /tmp/konfig ]; then
+    export KONFIG_DIR=/tmp/konfig
+fi
+run() {
+  $KONFIG_DIR/scripts/$@
+}
