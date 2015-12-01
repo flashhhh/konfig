@@ -70,6 +70,6 @@ echo "=== /$NAME ==="
 echo
 
 cd $_pwd
-if [ $fish_is_installed == "true" ]; then
+if [ $fish_is_installed = "true" ]; then
     exec fish
 fi
