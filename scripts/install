@@ -1,4 +1,0 @@
-#!/bin/bash
-sudo apt-get install vim tmux
-URL='https://launchpad.net/ubuntu/+archive/primary/+files/vifm_0.7.8-3_amd64.deb'; FILE=`mktemp`; wget "$URL" -qO $FILE && sudo dpkg -i $FILE; rm $FILE
-URL='https://launchpad.net/~fish-shell/+archive/ubuntu/release-2/+files/fish_2.2.0-1~trusty_amd64.deb'; FILE=`mktemp`; wget "$URL" -qO $FILE && sudo dpkg -i $FILE; rm $FILE
