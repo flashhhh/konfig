@@ -1,75 +1,41 @@
 #!bash
-TMP_DIR=/tmp/konfig
-TMP_HOME=/tmp/konfig_home
-_pwd=$PWD
+set -e
+KONFIG_DIR="$HOME/.konfig"
 NAME='konfig'
 
 echo "=== $NAME ==="
+function end {
+    echo "${1}"
+    echo "Executing $SHELL"
+    echo "===/$NAME==="
+    exec $SHELL
+}
 
+[ -d "$KONFIG_DIR" ] || end "$KONFIG_DIR doesn't exist, configs won't be downloaded."
+which git > /dev/null || end "Git isn't installed."
 
-if which git > /dev/null; then
-    echo "Git is installed (`git --version`)"
-    mkdir -p $TMP_DIR
-    cd $TMP_DIR
+echo "Git is installed (`git --version`)"
+cd "$KONFIG_DIR"
 
-    if ! git status > /dev/null 2>&1; then
-        echo "$NAME is not installed. Downloading..."
-        cd /
-        rm -rf $TMP_DIR
-        git clone https://github.com/flashhhh/konfig.git $TMP_DIR
-        cd $TMP_DIR
-    else 
-        git fetch
-        if [ $(git fetch) $(git rev-parse @) != $(git rev-parse @{u}) ]; then
-            echo "$NAME version is outdated. Updating..."
-            git pull origin master
-        else
-            echo "$NAME is at the newest version!"
-        fi
-    fi
+if ! git status > /dev/null 2>&1; then
+    echo "$NAME is not installed. Downloading..."
+    git clone https://github.com/flashhhh/konfig.git .
+else 
+    echo "Updating..."
+    git pull origin master
+fi
 
-    mkdir -p $TMP_HOME
-
-    for dir in $(ls -d $PWD/*/ | egrep -v "scripts"); do
-        cp -ap $dir/. $TMP_HOME
-    done
-
-    cp -ap $HOME/.ssh $TMP_HOME
-
-    export HOME=$TMP_HOME
-
-    if which vim > /dev/null; then
-        echo "vim is installed (`vim --version 2>&1 | head -1`)."
-    else
-        echo "vim is not installed!"
-    fi
-
-    if which vifm > /dev/null; then
-        echo "vifm is installed (`vifm --version 2>&1 | head -1`)."
-        for vifm_config in $TMP_HOME/.vifm/*.vifminfo; do
-            pattern=$(basename $vifm_config)
-            pattern=${bn%.*}
-            [[ $(hostname -f) =~ $pattern ]] && cp -ap $vifm_config $TMP_HOME/.vifm/vifminfo
-        done
-    else
-        echo "vifm is not installed!"
-    fi
-    
-    if which fish > /dev/null; then
-        echo "fish is installed (`fish --version 2>&1`). Going fish..."
-        fish_is_installed="true"
-    else
-        echo "fish is not installed. Staying at bash."
-        source "$TMP_DIR/bash/.bashrc"
-    fi
+if which vim > /dev/null; then
+    echo "vim is installed (`vim --version 2>&1 | head -1`)."
 else
-    echo "Git isn't installed, couldn't download configs!"
+    echo "vim is not installed!"
 fi
 
-echo "=== /$NAME ==="
-echo
-
-cd $_pwd
-if [ "$fish_is_installed" = "true" ]; then
-    exec fish
+if which fish > /dev/null; then
+    echo "fish is installed (`fish --version 2>&1`)."
+    $SHELL=$(which fish)
+else
+    echo "fish is not installed."
 fi
+
+end "Done successfuly."
