@@ -1,4 +1,0 @@
-neww -n shell 
-neww -n vifm 'vifm' 
-selectw -t vifm
-killw -t 0
