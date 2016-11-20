@@ -36,7 +36,7 @@ fi
 
 if which fish > /dev/null; then
     echo "fish is installed (`fish --version 2>&1`)."
-    $SHELL=$(which fish)
+    export SHELL=$(which fish)
 else
     echo "fish is not installed."
 fi
