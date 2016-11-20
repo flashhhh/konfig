@@ -1,6 +1,6 @@
 #!/bin/bash
 name=$1
-path="$HOME/scripts/tmux.d/$name.tmuxrc"
+path="$HOME/konfig/scripts/tmux.d/$name.tmuxrc"
 
 if !(tmux has-session -t "$name" 2> /dev/null); then
   tmux start                     \;\

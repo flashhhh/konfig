@@ -118,5 +118,5 @@ alias sl="screen -list"
 alias sr="screen -r"
 alias rs="screen -dmS rs ~/Programs/realsync/realsync /server/rs"
 run() {
-  $HOME/scripts/$@
+  $HOME/konfig/scripts/$@
 }
