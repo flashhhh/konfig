@@ -8,6 +8,7 @@ function end {
     echo "${1}"
     echo "Executing $SHELL"
     echo "===/$NAME==="
+    cd $HOME
     exec $SHELL
 }
 
