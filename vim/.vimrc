@@ -18,3 +18,4 @@ set ai
 set ic
 set hls
 
+syntax on

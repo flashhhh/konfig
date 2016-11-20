@@ -1,4 +1,4 @@
-neww -n dev          'sshrc root@dev.velvica.com'
+neww -n dev          'sshrc -R 14090:localhost:14090 root@dev.velvica.com'
 neww -n test         'sshrc root@test.velvica.com'
 neww -n host-b-02    'sshrc root@host-b-02.prod.velvica.com'
 neww -n host-b-01    'sshrc root@host-b-01.prod.velvica.com'
@@ -6,7 +6,6 @@ neww -n ltc-prod     'sshrc root@10.204.7.37'
 neww -n ltc-qa       'sshrc root@10.204.24.158'
 neww -n stack        'sshrc root@bo.stack24.net'
 neww -n proxy-a-01   'sshrc root@proxy-a-01.prod.velvica.com'
-neww -n realsync     '~/Programs/realsync/realsync /server/rs'
-neww -n port-pass    'ssh -R 9090:localhost:9090 root@dev.velvica.com'
+neww -n realsync     '~/Programs/realsync/realsync ~/Projects/rs'
 selectw -t dev
 killw -t 0
