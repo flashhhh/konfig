@@ -1,3 +1,3 @@
 function run
-  eval "$KONFIG_DIR/scripts/$argv"
+  eval "$HOME/scripts/$argv"
 end
