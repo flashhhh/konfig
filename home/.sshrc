@@ -25,6 +25,9 @@ else
     git pull origin master
 fi
 
+echo "Creating symlinks..."
+./apply_konfig.sh
+
 if which vim > /dev/null; then
     echo "vim is installed (`vim --version 2>&1 | head -1`)."
 else
