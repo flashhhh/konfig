@@ -26,9 +26,6 @@ set so=7
 " Turn on the WiLd menu
 set wildmenu
 
-" Always show current position
-set ruler
-
 " Height of the command bar
 set cmdheight=1
 
@@ -83,18 +80,8 @@ if has("gui_macvim")
     autocmd GUIEnter * set vb t_vb=
 endif
 
-" Add a bit extra margin to the left
-set foldcolumn=1
-
 " Enable syntax highlighting
 syntax enable
-
-set t_Co=256
-try
-    colorscheme railscasts
-catch
-endtry
-
 set background=dark
 
 " Set extra options when running in GUI mode
@@ -256,6 +243,12 @@ try
     set undofile
 catch
 endtry
+
+execute pathogen#infect()
+
+highlight SpecialKey guifg=#FF0000 ctermfg=1
+set listchars=trail:_
+set list
 
 """ END
 
