@@ -260,6 +260,7 @@ let g:javascript_plugin_jsdoc = 1
 set colorcolumn=100
 
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#branch#enabled = 0
 
 """ END
 
