@@ -248,6 +248,20 @@ highlight SpecialKey guifg=#FF0000 ctermfg=1
 set listchars=trail:_
 set list
 
+" Include dotfiles to CtrlP results
+let g:ctrlp_dotfiles = 1
+
+" Map <leader>Enter to "Insert a line"
+map <leader><CR> A<CR><ESC>
+
+let g:ctrlp_cmd = 'CtrlPMixed'
+let g:ctrlp_map = '<Leader>p'
+map <Leader>P :CtrlPBuffer<CR>
+
+let g:javascript_plugin_jsdoc = 1
+
+set colorcolumn=100
+
 """ END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
