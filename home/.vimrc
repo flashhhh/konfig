@@ -242,7 +242,7 @@ set guioptions-=L
 "    means that you can undo even when you close a buffer/VIM
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 try
-    set undodir=/tmp/vimundo
+    set undodir=/tmp/
     set undofile
 catch
 endtry
