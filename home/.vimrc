@@ -1,3 +1,5 @@
+execute pathogen#infect()
+
 " Sets how many lines of history VIM has to remember
 set history=500
 
@@ -246,8 +248,6 @@ try
     set undofile
 catch
 endtry
-
-execute pathogen#infect()
 
 highlight SpecialKey guifg=#FF0000 ctermfg=1
 set listchars=trail:_
