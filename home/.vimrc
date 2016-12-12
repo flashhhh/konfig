@@ -262,6 +262,9 @@ set colorcolumn=100
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#branch#enabled = 0
 
+map / <Plug>(incsearch-fuzzy-/)
+map ? <Plug>(incsearch-fuzzy-?)
+
 """ END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
