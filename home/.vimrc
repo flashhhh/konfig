@@ -242,7 +242,7 @@ catch
 endtry
 
 highlight SpecialKey guifg=#FF0000 ctermfg=1
-set listchars=trail:_
+set listchars=trail:_,tab:>-
 set list
 
 " Include dotfiles to CtrlP results
