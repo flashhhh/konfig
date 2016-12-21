@@ -270,6 +270,11 @@ map <Left> :bprev<CR>
 map <Up> :echo "Use k!"<CR>
 map <Down> :echo "Use j!"<CR>
 
+" Automatically close unused Fugitive buffer
+autocmd BufReadPost fugitive://* set bufhidden=delete
+
+set dip=vertical
+
 """ END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
