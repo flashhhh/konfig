@@ -264,6 +264,10 @@ let g:airline#extensions#branch#enabled = 0
 
 map / <Plug>(incsearch-fuzzy-/)
 map ? <Plug>(incsearch-fuzzy-?)
+map <Right> :bnext<CR>
+map <Left> :bprev<CR>
+map <Up> :echo "Use k!"<CR>
+map <Down> :echo "Use j!"<CR>
 
 """ END
 
