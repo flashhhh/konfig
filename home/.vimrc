@@ -182,11 +182,11 @@ func! DeleteTrailingWS()
 endfunc
 autocmd BufWrite * :call DeleteTrailingWS()
 
-" When you press gv you Ag after the selected text
+" When you press gv you Ack after the selected text
 vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
 
-" Open Ag and put the cursor in the right position
-map <leader>g :Ag
+" Open Ack and put the cursor in the right position
+map <leader>g :Ack
 
 " When you press <leader>r you can search and replace the selected text
 vnoremap <silent> <leader>r :call VisualSelection('replace', '')<CR>
@@ -223,6 +223,7 @@ try
 catch
 endtry
 
+" Highlight trailing spaces and tabs with red color
 highlight SpecialKey guifg=#FF0000 ctermfg=1
 set listchars=trail:_,tab:>-
 set list
@@ -230,22 +231,28 @@ set list
 " Include dotfiles to CtrlP results
 let g:ctrlp_dotfiles = 1
 
-" Map <leader>Enter to "Insert a line"
+" Map <leader>Enter to insert a line
 map <leader><CR> A<CR><ESC>
 
+" Change default mappings for CtrlP
 let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_map = '<Leader>p'
 map <Leader>P :CtrlPBuffer<CR>
 
+" Enable JSDoc highlight
 let g:javascript_plugin_jsdoc = 1
 
+" Add a vertical column at the 100th character
 set colorcolumn=100
 
+" Enable airline#tabline
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#branch#enabled = 0
 
-map <leader>/ <Plug>(incsearch-fuzzy-/)
-map <leader>? <Plug>(incsearch-fuzzy-?)
+" Map incsearch
+map <leader>/ <Plug>(incsearch-forward)
+map <leader>? <Plug>(incsearch-backward)
+map / <Plug>(incsearch-fuzzy-/)
+map ? <Plug>(incsearch-fuzzy-?)
 
 map <Right> :bnext<CR>
 map <Left> :bprev<CR>
@@ -255,6 +262,7 @@ map <Down> :echo "Use j!"<CR>
 " Automatically close unused Fugitive buffer
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
+" Vertical splits by default
 set dip=vertical
 
 """ END
@@ -276,7 +284,7 @@ function! VisualSelection(direction, extra_filter) range
     let l:pattern = substitute(l:pattern, "\n$", "", "")
 
     if a:direction == 'gv'
-        call CmdLine("Ag \"" . l:pattern . "\" " )
+        call CmdLine("Ack \"" . l:pattern . "\" " )
     elseif a:direction == 'replace'
         call CmdLine("%s" . '/'. l:pattern . '/')
     endif
