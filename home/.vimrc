@@ -281,6 +281,11 @@ let g:netrw_winsize = 20
 
 map <Leader>e :Vexplore<CR>
 
+let g:NERDSpaceDelims = 1
+let g:NERDCommentEmptyLines = 1
+
+map - <Leader>c<Space>
+
 """ END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
