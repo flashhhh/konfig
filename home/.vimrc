@@ -191,6 +191,11 @@ vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
 " Open Ack and put the cursor in the right position
 map <leader>g :Ack
 
+" Highlight search results
+let g:ackhighlight = 1
+" Use Ag as the back-end for Ack command
+let g:ackprg = 'ag --vimgrep'
+
 " When you press <leader>r you can search and replace the selected text
 vnoremap <silent> <leader>r :call VisualSelection('replace', '')<CR>
 
