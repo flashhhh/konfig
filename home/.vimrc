@@ -182,6 +182,9 @@ func! DeleteTrailingWS()
 endfunc
 autocmd BufWrite * :call DeleteTrailingWS()
 
+" Ack! by default. Don't jump to the first result
+cnoreabbrev Ack Ack!
+
 " When you press gv you Ack after the selected text
 vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
 
