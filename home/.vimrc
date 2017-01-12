@@ -286,6 +286,12 @@ let g:NERDCommentEmptyLines = 1
 
 map - <Leader>c<Space>
 
+set completeopt-=preview
+let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#enable_smart_case = 1
+
+let g:indentLine_color_term = 236
+
 """ END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
