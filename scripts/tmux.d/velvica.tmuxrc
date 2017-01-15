@@ -1,3 +1,4 @@
+movew -t 0
 neww -n dev          'sshrc -R 14090:localhost:14090 kro@dev.velvica.com'
 neww -n test         'sshrc kro@test.velvica.com'
 neww -n host-b-02    'sshrc kro@host-b-02.prod.velvica.com'
