@@ -1,4 +1,5 @@
 execute pathogen#infect()
+call pathogen#helptags()
 
 " Sets how many lines of history VIM has to remember
 set history=500
@@ -17,6 +18,8 @@ let g:mapleader = ","
 
 " Fast saving
 map <leader>w :w!<cr>
+" Fast leaving
+map <leader>q :q!<cr>
 
 " :W sudo saves the file
 " (useful for handling the permission-denied error)
@@ -79,9 +82,11 @@ endif
 
 " Enable syntax highlighting
 syntax enable
+" set t_Co=256
+" let g:solarized_termcolors=256
+let g:solarized_contrast="low"
+let g:solarized_termtrans=0
 set background=dark
-set t_Co=256
-let g:solarized_termcolors=256
 colorscheme solarized
 
 " Set extra options when running in GUI mode
@@ -135,6 +140,9 @@ map <leader>bd :Bclose<cr>:tabclose<cr>gT
 
 " Close all the buffers
 map <leader>ba :bufdo bd<cr>
+
+" Close all buffers except the current
+map <leader>bo :Bonly<cr>
 
 map <leader>l :bnext<cr>
 map <leader>h :bprevious<cr>
@@ -256,6 +264,8 @@ set colorcolumn=100
 " Enable airline#tabline
 let g:airline#extensions#tabline#enabled = 1
 
+let g:airline_powerline_fonts = 1
+
 " Map incsearch
 map <leader>/ <Plug>(incsearch-forward)
 map <leader>? <Plug>(incsearch-backward)
@@ -279,7 +289,27 @@ let g:netrw_browse_split = 4
 let g:netrw_altv = 1
 let g:netrw_winsize = 20
 
-map <Leader>e :Vexplore<CR>
+" Toggle Vexplore
+function! ToggleVExplorer()
+  if exists("t:expl_buf_num")
+      let expl_win_num = bufwinnr(t:expl_buf_num)
+      if expl_win_num != -1
+          let cur_win_nr = winnr()
+          exec expl_win_num . 'wincmd w'
+          close
+          exec cur_win_nr . 'wincmd w'
+          unlet t:expl_buf_num
+      else
+          unlet t:expl_buf_num
+      endif
+  else
+      exec '1wincmd w'
+      Vexplore
+      let t:expl_buf_num = bufnr("%")
+  endif
+endfunction
+
+map <silent> <Leader>e :call ToggleVExplorer()<CR>
 
 let g:NERDSpaceDelims = 1
 let g:NERDCommentEmptyLines = 1
@@ -291,6 +321,22 @@ let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 
 let g:indentLine_color_term = 236
+
+let g:easytags_auto_highlight = 0
+let g:easytags_async = 1
+let g:easytags_suppress_ctags_warning = 1
+
+autocmd FileType javascript map <C-]> :TernDef<CR>
+
+let g:syntastic_javascript_checkers = ['eslint']
+" Point syntastic checker at locally installed `standard` if it exists.
+if executable('node_modules/.bin/eslint')
+  let b:syntastic_javascript_eslint_exec = 'node_modules/.bin/eslint'
+endif
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
 
 """ END
 
