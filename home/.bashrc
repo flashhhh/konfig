@@ -120,3 +120,4 @@ alias rs="screen -dmS rs ~/Programs/realsync/realsync /server/rs"
 run() {
   $HOME/.konfig/scripts/$@
 }
+EDITOR=vim
