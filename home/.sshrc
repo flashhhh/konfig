@@ -7,7 +7,7 @@ echo "=== $NAME ==="
 function end {
     echo "${1}"
     echo "Executing $SHELL"
-    echo "===/$NAME==="
+    echo "=== /$NAME ==="
     cd $HOME
     exec $SHELL
 }
@@ -21,7 +21,7 @@ cd "$KONFIG_DIR"
 if ! git status > /dev/null 2>&1; then
     echo "$NAME is not installed. Downloading..."
     git clone https://github.com/flashhhh/konfig.git .
-else 
+else
     echo "Updating..."
     git pull origin master
 fi
