@@ -35,8 +35,8 @@ set wildmenu
 set cmdheight=1
 
 " Ignore compiled files
-set wildignore=*.o,*~,*.pyc
-set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+" set wildignore=*.o,*~,*.pyc
+" set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 
 " A buffer becomes hidden when it is abandoned
 set hid
@@ -282,7 +282,7 @@ map <Down> :echo "Use j!"<CR>
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
 " Vertical splits by default
-" set dip=vertical
+set dip=vertical
 
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
