@@ -136,7 +136,7 @@ map <C-h> <C-W>h
 map <C-l> <C-W>l
 
 " Close the current buffer
-map <leader>bd :Bclose<cr>:tabclose<cr>gT
+map <leader>bd :Bclose<cr>gT
 
 " Close all the buffers
 map <leader>ba :bufdo bd<cr>
@@ -260,6 +260,7 @@ let g:javascript_plugin_jsdoc = 1
 
 " Add a vertical column at the 100th character
 set colorcolumn=100
+:hi ColorColumn ctermbg=10
 
 " Enable airline#tabline
 let g:airline#extensions#tabline#enabled = 1
@@ -267,10 +268,10 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 
 " Map incsearch
-map <leader>/ <Plug>(incsearch-forward)
-map <leader>? <Plug>(incsearch-backward)
-map / <Plug>(incsearch-fuzzy-/)
-map ? <Plug>(incsearch-fuzzy-?)
+map / <Plug>(incsearch-forward)
+map ? <Plug>(incsearch-backward)
+" map / <Plug>(incsearch-fuzzy-/)
+" map ? <Plug>(incsearch-fuzzy-?)
 
 map <Right> :bnext<CR>
 map <Left> :bprev<CR>
@@ -281,7 +282,7 @@ map <Down> :echo "Use j!"<CR>
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
 " Vertical splits by default
-set dip=vertical
+" set dip=vertical
 
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
@@ -320,7 +321,7 @@ set completeopt-=preview
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 
-let g:indentLine_color_term = 236
+let g:indentLine_color_term = 239
 
 let g:easytags_auto_highlight = 0
 let g:easytags_async = 1
@@ -337,6 +338,16 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
+
+let g:vdebug_options = {}
+let g:vdebug_options['port'] = 14090
+let g:vdebug_options['path_maps'] = {"/srv/www/kro/rs": "/Users/kirillrogovoy/Projects/rs"}
+let g:neocomplete#disable_auto_complete = 1
+
+let g:ctrlp_user_command = ['.git', 'bash -c "cd %s && git ls-files -co --exclude-standard"']
+
+set ttyfast
+
 
 """ END
 
