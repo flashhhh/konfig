@@ -19,7 +19,7 @@ let g:mapleader = ","
 " Fast saving
 map <leader>w :w!<cr>
 " Fast leaving
-map <leader>q :q!<cr>
+map <leader>qq :q!<cr>
 
 " :W sudo saves the file
 " (useful for handling the permission-denied error)
@@ -239,11 +239,6 @@ try
 catch
 endtry
 
-" Highlight trailing spaces and tabs with red color
-highlight SpecialKey guifg=#FF0000 ctermfg=1
-set listchars=trail:_,tab:>-
-set list
-
 " Include dotfiles to CtrlP results
 let g:ctrlp_dotfiles = 1
 
@@ -284,34 +279,6 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 " Vertical splits by default
 set dip=vertical
 
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
-let g:netrw_winsize = 20
-
-" Toggle Vexplore
-function! ToggleVExplorer()
-  if exists("t:expl_buf_num")
-      let expl_win_num = bufwinnr(t:expl_buf_num)
-      if expl_win_num != -1
-          let cur_win_nr = winnr()
-          exec expl_win_num . 'wincmd w'
-          close
-          exec cur_win_nr . 'wincmd w'
-          unlet t:expl_buf_num
-      else
-          unlet t:expl_buf_num
-      endif
-  else
-      exec '1wincmd w'
-      Vexplore
-      let t:expl_buf_num = bufnr("%")
-  endif
-endfunction
-
-map <silent> <Leader>e :call ToggleVExplorer()<CR>
-
 let g:NERDSpaceDelims = 1
 let g:NERDCommentEmptyLines = 1
 
@@ -330,10 +297,10 @@ let g:easytags_suppress_ctags_warning = 1
 autocmd FileType javascript map <C-]> :TernDef<CR>
 
 let g:syntastic_javascript_checkers = ['eslint']
-" Point syntastic checker at locally installed `standard` if it exists.
-if executable('node_modules/.bin/eslint')
-  let b:syntastic_javascript_eslint_exec = 'node_modules/.bin/eslint'
-endif
+" Point syntastic checker at locally installed `eslint` if it exists.
+" if executable('node_modules/.bin/eslint')
+let g:syntastic_javascript_eslint_exec = 'node_modules/.bin/eslint'
+" endif
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
@@ -348,6 +315,12 @@ let g:ctrlp_user_command = ['.git', 'bash -c "cd %s && git ls-files -co --exclud
 
 set ttyfast
 
+set spell
+set spell spelllang=en_us
+
+map <Leader>n :noh<CR>
+
+map <Leader>e :NERDTreeFind<CR>
 
 """ END
 
