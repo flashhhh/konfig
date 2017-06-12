@@ -116,6 +116,7 @@ set smarttab
 " 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
+au FileType javascript setl sw=2 sts=2 et
 
 " Linebreak on 500 characters
 set lbr
@@ -207,8 +208,6 @@ let g:ackprg = 'ag --vimgrep'
 " When you press <leader>r you can search and replace the selected text
 vnoremap <silent> <leader>r :call VisualSelection('replace', '')<CR>
 
-map <leader>pp :setlocal paste!<cr>
-
 set number
 
 if has("mac") || has("macunix")
@@ -246,21 +245,18 @@ let g:ctrlp_dotfiles = 1
 map <leader><CR> A<CR><ESC>
 
 " Change default mappings for CtrlP
-let g:ctrlp_cmd = 'CtrlPMixed'
+" let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_map = '<Leader>p'
 map <Leader>P :CtrlPBuffer<CR>
 
 " Enable JSDoc highlight
 let g:javascript_plugin_jsdoc = 1
 
-" Add a vertical column at the 100th character
-set colorcolumn=100
-:hi ColorColumn ctermbg=10
-
-" Enable airline#tabline
-let g:airline#extensions#tabline#enabled = 1
+let g:airline_extensions = ['tabline', 'syntastic', 'hunks', 'ctrlp']
+" let g:airline_extensions = []
 
 let g:airline_powerline_fonts = 1
+
 
 " Map incsearch
 map / <Plug>(incsearch-forward)
@@ -288,19 +284,19 @@ set completeopt-=preview
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 
-let g:indentLine_color_term = 239
-
 let g:easytags_auto_highlight = 0
 let g:easytags_async = 1
 let g:easytags_suppress_ctags_warning = 1
 
 autocmd FileType javascript map <C-]> :TernDef<CR>
+autocmd FileType go map <C-]> <Plug>(go-def)
 
-let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_checkers = ['eslint', 'standard']
+let g:syntastic_go_checkers = ['golint', 'go', 'gotype', 'govet']
 " Point syntastic checker at locally installed `eslint` if it exists.
-" if executable('node_modules/.bin/eslint')
 let g:syntastic_javascript_eslint_exec = 'node_modules/.bin/eslint'
-" endif
+" autocmd bufwritepost *.js silent !standard --fix -w %
+
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
@@ -309,7 +305,7 @@ let g:syntastic_check_on_wq = 1
 let g:vdebug_options = {}
 let g:vdebug_options['port'] = 14090
 let g:vdebug_options['path_maps'] = {"/srv/www/kro/rs": "/Users/kirillrogovoy/Projects/rs"}
-let g:neocomplete#disable_auto_complete = 1
+" let g:neocomplete#disable_auto_complete = 1
 
 let g:ctrlp_user_command = ['.git', 'bash -c "cd %s && git ls-files -co --exclude-standard"']
 
@@ -319,8 +315,20 @@ set spell
 set spell spelllang=en_us
 
 map <Leader>n :noh<CR>
+map <Leader>o :only<CR>
 
 map <Leader>e :NERDTreeFind<CR>
+set clipboard=unnamed
+let g:SuperTabDefaultCompletionType = "context"
+let g:go_fmt_command = "goimports"
+
+let g:phpfmt_standard = '~/Projects/rs/ruleset.xml'
+let g:syntastic_php_phpcs_args = '--standard=~/Projects/rs/ruleset.xml'
+
+let g:syntastic_loc_list_height = 3
+let g:NERDTreeQuitOnOpen = 1
+
+set notimeout
 
 """ END
 

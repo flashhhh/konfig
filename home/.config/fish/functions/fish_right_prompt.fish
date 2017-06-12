@@ -9,7 +9,8 @@ function fish_right_prompt
     set -l red (set_color red)
 
     set -l delim "$yellow:"
-    set -l cwd $cyan(pwd)
+    set -l pwd (basename (pwd))
+    set -l cwd "$cyan$pwd"
     set -l hostname $blue(hostname -f)
     set -l whoami $blue(whoami)
 
