@@ -299,7 +299,7 @@ let g:syntastic_javascript_eslint_exec = 'node_modules/.bin/eslint'
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 1
 
 let g:vdebug_options = {}
@@ -329,6 +329,17 @@ let g:syntastic_loc_list_height = 3
 let g:NERDTreeQuitOnOpen = 1
 
 set notimeout
+
+function! PhpSyntaxOverride()
+  hi! def link phpParent      None
+  hi! def link phpIdentifier  None
+  hi! def link phpVarSelector None
+endfunction
+
+augroup phpSyntaxOverride
+  autocmd!
+  autocmd FileType php call PhpSyntaxOverride()
+augroup END
 
 """ END
 
