@@ -14,5 +14,5 @@ function fish_right_prompt
     set -l hostname $blue(hostname -f)
     set -l whoami $blue(whoami)
 
-    echo -n -s "$red$last_status $whoami$yellow@$hostname$delim$cwd"
+    #echo -n -s "$red$last_status $whoami$yellow@$hostname$delim$cwd"
 end
