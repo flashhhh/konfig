@@ -252,7 +252,7 @@ map <Leader>P :CtrlPBuffer<CR>
 " Enable JSDoc highlight
 let g:javascript_plugin_jsdoc = 1
 
-let g:airline_extensions = ['tabline', 'syntastic', 'hunks', 'ctrlp']
+let g:airline_extensions = ['tabline', 'ale', 'hunks', 'ctrlp']
 " let g:airline_extensions = []
 
 let g:airline_powerline_fonts = 1
@@ -291,16 +291,20 @@ let g:easytags_suppress_ctags_warning = 1
 autocmd FileType javascript map <C-]> :TernDef<CR>
 autocmd FileType go map <C-]> <Plug>(go-def)
 
-let g:syntastic_javascript_checkers = ['eslint', 'standard']
-let g:syntastic_go_checkers = ['golint', 'go', 'gotype', 'govet']
-" Point syntastic checker at locally installed `eslint` if it exists.
-let g:syntastic_javascript_eslint_exec = 'node_modules/.bin/eslint'
-" autocmd bufwritepost *.js silent !standard --fix -w %
+let g:ale_linters = {
+\   'javascript': ['eslint'],
+\   'php': ['php -l', 'phpcs'],
+\   'go': ['golint', 'go', 'gotype', 'govet'],
+\}
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 1
+let g:ale_php_phpcs_standard = '~/Projects/rs/ruleset.xml'
+
+let g:ale_fixers = {
+\   'javascript': ['eslint'],
+\}
+let g:ale_fix_on_save = 1
+
+let g:phpfmt_standard = '~/Projects/rs/ruleset.xml'
 
 let g:vdebug_options = {}
 let g:vdebug_options['port'] = 14090
@@ -322,10 +326,6 @@ set clipboard=unnamed
 let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_command = "goimports"
 
-let g:phpfmt_standard = '~/Projects/rs/ruleset.xml'
-let g:syntastic_php_phpcs_args = '--standard=~/Projects/rs/ruleset.xml'
-
-let g:syntastic_loc_list_height = 3
 let g:NERDTreeQuitOnOpen = 1
 
 set notimeout
