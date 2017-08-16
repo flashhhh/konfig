@@ -253,7 +253,6 @@ map <Leader>P :CtrlPBuffer<CR>
 let g:javascript_plugin_jsdoc = 1
 
 let g:airline_extensions = ['tabline', 'ale', 'hunks', 'ctrlp']
-" let g:airline_extensions = []
 
 let g:airline_powerline_fonts = 1
 
@@ -294,7 +293,7 @@ autocmd FileType go map <C-]> <Plug>(go-def)
 let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'php': ['php -l', 'phpcs'],
-\   'go': ['golint', 'go', 'gotype', 'govet'],
+\   'go': ['golint', 'go build', 'go type', 'go vet', 'gosimple', 'staticcheck'],
 \}
 
 let g:ale_php_phpcs_standard = '~/Projects/rs/ruleset.xml'
@@ -303,6 +302,10 @@ let g:ale_fixers = {
 \   'javascript': ['eslint'],
 \}
 let g:ale_fix_on_save = 1
+let g:ale_set_loclist = 0
+
+nmap <silent> }a <Plug>(ale_next_wrap)
+nmap <silent> {a <Plug>(ale_previous_wrap)
 
 let g:phpfmt_standard = '~/Projects/rs/ruleset.xml'
 
