@@ -28,7 +28,7 @@ command W w !sudo tee % > /dev/null
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
 
-" Turn on the WiLd menu
+"Turn on the WiLd menu - needed for good code completion exprerience
 set wildmenu
 
 " Height of the command bar
@@ -82,8 +82,6 @@ endif
 
 " Enable syntax highlighting
 syntax enable
-" set t_Co=256
-" let g:solarized_termcolors=256
 let g:solarized_contrast="low"
 let g:solarized_termtrans=0
 set background=dark
@@ -116,6 +114,8 @@ set smarttab
 " 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
+
+" Force 2 spaces in javascript files
 au FileType javascript setl sw=2 sts=2 et
 
 " Linebreak on 500 characters
@@ -145,27 +145,10 @@ map <leader>ba :bufdo bd<cr>
 " Close all buffers except the current
 map <leader>bo :Bonly<cr>
 
-map <leader>l :bnext<cr>
-map <leader>h :bprevious<cr>
-
-" Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove
-map <leader>t<leader> :tabnext
-
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
 nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
 au TabLeave * let g:lasttab = tabpagenr()
-
-" Opens a new tab with the current buffer's path
-" Super useful when editing files in the same directory
-map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-
-" Switch CWD to the directory of the open buffer
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Specify the behavior when switching between buffers
 try
@@ -174,7 +157,7 @@ try
 catch
 endtry
 
-" Return to last edit position when opening files (You want this!)
+" Return to last edit position when opening files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " Always show the status line
@@ -195,10 +178,10 @@ autocmd BufWrite * :call DeleteTrailingWS()
 cnoreabbrev Ack Ack!
 
 " When you press gv you Ack after the selected text
-vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
+vnoremap <silent> <leader>g :call VisualSelection('gv', '')<CR>
 
 " Open Ack and put the cursor in the right position
-map <leader>g :Ack
+nnoremap <leader>g :Ack
 
 " Highlight search results
 let g:ackhighlight = 1
@@ -241,9 +224,6 @@ endtry
 " Include dotfiles to CtrlP results
 let g:ctrlp_dotfiles = 1
 
-" Map <leader>Enter to insert a line
-map <leader><CR> A<CR><ESC>
-
 " Change default mappings for CtrlP
 " let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_map = '<Leader>p'
@@ -262,8 +242,6 @@ let g:ale_lint_on_enter = 0
 " Map incsearch
 map / <Plug>(incsearch-forward)
 map ? <Plug>(incsearch-backward)
-" map / <Plug>(incsearch-fuzzy-/)
-" map ? <Plug>(incsearch-fuzzy-?)
 
 map <Right> :bnext<CR>
 map <Left> :bprev<CR>
@@ -299,6 +277,7 @@ let g:ale_linters = {
 \}
 
 let g:ale_php_phpcs_standard = '~/Projects/rs/ruleset.xml'
+let g:phpfmt_standard = '~/Projects/rs/ruleset.xml'
 
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
@@ -309,12 +288,10 @@ let g:ale_set_loclist = 0
 nmap <silent> }a <Plug>(ale_next_wrap)
 nmap <silent> {a <Plug>(ale_previous_wrap)
 
-let g:phpfmt_standard = '~/Projects/rs/ruleset.xml'
 
 let g:vdebug_options = {}
 let g:vdebug_options['port'] = 14090
 let g:vdebug_options['path_maps'] = {"/srv/www/kro/rs": "/Users/kirillrogovoy/Projects/rs"}
-" let g:neocomplete#disable_auto_complete = 1
 
 let g:ctrlp_user_command = ['.git', 'bash -c "cd %s && git ls-files -co --exclude-standard"']
 
