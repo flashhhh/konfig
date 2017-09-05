@@ -256,6 +256,8 @@ let g:airline_extensions = ['tabline', 'ale', 'hunks', 'ctrlp']
 
 let g:airline_powerline_fonts = 1
 
+let g:ale_lint_on_enter = 0
+
 
 " Map incsearch
 map / <Plug>(incsearch-forward)
