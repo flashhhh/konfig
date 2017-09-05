@@ -1,0 +1,17 @@
+[user]
+	name = Kirill Rogovoy
+	email = kirill@rogovoy.me
+[core]
+	autocrlf = input
+	excludesfile = ~/.gitignore
+[alias]
+	co = checkout
+    cm = commit -m
+    s = status
+    d = diff
+[diff]
+	tool = vimdiff
+[merge]
+	tool = vimdiff
+[web]
+	browser = open
