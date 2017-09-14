@@ -309,7 +309,7 @@ map <Leader>e :NERDTreeFind<CR>
 set clipboard=unnamed
 let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_command = "goimports"
-set updatetime = 100
+set updatetime=100
 let g:go_fmt_fail_silently = 1
 let g:go_auto_type_info = 1
 
