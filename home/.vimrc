@@ -135,6 +135,7 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
+map ` <C-W><C-W>
 
 " Close the current buffer
 map <leader>bd :Bclose<cr>gT
@@ -146,9 +147,9 @@ map <leader>ba :bufdo bd<cr>
 map <leader>bo :Bonly<cr>
 
 " Let 'tl' toggle between this and the last accessed tab
-let g:lasttab = 1
-nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
-au TabLeave * let g:lasttab = tabpagenr()
+" let g:lasttab = 1
+" nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
+" au TabLeave * let g:lasttab = tabpagenr()
 
 " Specify the behavior when switching between buffers
 try
@@ -232,7 +233,8 @@ map <Leader>P :CtrlPBuffer<CR>
 " Enable JSDoc highlight
 let g:javascript_plugin_jsdoc = 1
 
-let g:airline_extensions = ['tabline', 'ale', 'hunks', 'ctrlp']
+let g:airline_extensions = ['tabline', 'ale', 'hunks', 'ctrlp', 'tagbar']
+let g:airline#extensions#tagbar#flags = 'f'
 
 let g:airline_powerline_fonts = 1
 
@@ -307,6 +309,9 @@ map <Leader>e :NERDTreeFind<CR>
 set clipboard=unnamed
 let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_command = "goimports"
+set updatetime = 100
+let g:go_fmt_fail_silently = 1
+let g:go_auto_type_info = 1
 
 let g:NERDTreeQuitOnOpen = 1
 
@@ -322,6 +327,8 @@ augroup phpSyntaxOverride
   autocmd!
   autocmd FileType php call PhpSyntaxOverride()
 augroup END
+
+map <leader>t :TagbarOpenAutoClose<CR>
 
 """ END
 
