@@ -5,7 +5,7 @@
 	autocrlf = input
 	excludesfile = ~/.gitignore
 [alias]
-	co = checkout
+    co = checkout
     cm = commit -m
     s = status
     d = diff
