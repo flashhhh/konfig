@@ -20,7 +20,7 @@ cd "$KONFIG_DIR"
 
 if ! git status > /dev/null 2>&1; then
     echo "$NAME is not installed. Downloading..."
-    git clone https://github.com/flashhhh/konfig.git .
+    git clone https://github.com/kirillrogovoy/konfig.git .
 else
     echo "Updating..."
     git pull origin master
@@ -40,6 +40,16 @@ if which fish > /dev/null; then
     export SHELL=$(which fish)
 else
     echo "fish is not installed."
+fi
+
+if which tmux > /dev/null; then
+    echo "tmux is installed (`tmux -V 2>&1`)."
+    if ! tmux attach -t ssh; then
+        echo "Starting new tmux session"
+        tmux new-session -s ssh
+    fi
+else
+    echo "tmux is not installed."
 fi
 
 end "Done successfuly."
