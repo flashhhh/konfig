@@ -232,11 +232,36 @@ map <Leader>P :CtrlPBuffer<CR>
 
 " Enable JSDoc highlight
 let g:javascript_plugin_jsdoc = 1
+set statusline+=%#StatusLineNC#
+set statusline+=\ %f\ %r\ %q
+set statusline+=\ %{tagbar#currenttag('%s','','f')}
+set statusline+=%=
+set statusline+=%#Search#
+set statusline+=\ %l:%v/%L
+set statusline+=\ %#ErrorMsg#
+set statusline+=\ %{ale#statusline#Count(bufnr('')).error}
+set statusline+=\ |
 
-let g:airline_extensions = ['tabline', 'ale', 'hunks', 'ctrlp', 'tagbar']
-let g:airline#extensions#tagbar#flags = 'f'
+let g:buftabline_indicators = 1
+let g:buftabline_numbers = 2
+hi! def link BufTabLineCurrent StatusLine
+hi! def link BufTabLineFill    None
+hi! def link BufTabLineActive  StatusLineNC
+hi! def link BufTabLineHidden  StatusLineNC
 
-let g:airline_powerline_fonts = 1
+hi! def link CursorLine StatusLineNC
+
+let g:AutoPairsMoveCharacter = ""
+map <F1> <Plug>BufTabLine.Go(1)
+map <F2> <Plug>BufTabLine.Go(2)
+map <F3> <Plug>BufTabLine.Go(3)
+map <F4> <Plug>BufTabLine.Go(4)
+map <F5> <Plug>BufTabLine.Go(5)
+map <F6> <Plug>BufTabLine.Go(6)
+map <F7> <Plug>BufTabLine.Go(7)
+map <F8> <Plug>BufTabLine.Go(8)
+map <F9> <Plug>BufTabLine.Go(9)
+map § :b#<CR>
 
 let g:ale_lint_on_enter = 0
 
@@ -245,8 +270,10 @@ let g:ale_lint_on_enter = 0
 map / <Plug>(incsearch-forward)
 map ? <Plug>(incsearch-backward)
 
-map <Right> :bnext<CR>
-map <Left> :bprev<CR>
+" map <Right> :bnext<CR>
+" map <Left> :bprev<CR>
+map <Right> :echo "Use l!"<CR>
+map <Left> :echo "Use h!"<CR>
 map <Up> :echo "Use k!"<CR>
 map <Down> :echo "Use j!"<CR>
 
@@ -294,6 +321,19 @@ nmap <silent> {a <Plug>(ale_previous_wrap)
 let g:vdebug_options = {}
 let g:vdebug_options['port'] = 14090
 let g:vdebug_options['path_maps'] = {"/srv/www/kro/rs": "/Users/kirillrogovoy/Projects/rs"}
+let g:vdebug_keymap = {
+\    "run" : "<leader><F5>",
+\    "run_to_cursor" : "<leader><F9>",
+\    "step_over" : "<leader><F2>",
+\    "step_into" : "<leader><F3>",
+\    "step_out" : "<leader><F4>",
+\    "close" : "<leader><F6>",
+\    "detach" : "<leader><F7>",
+\    "set_breakpoint" : "<leader><F10>",
+\    "get_context" : "<leader><F11>",
+\    "eval_under_cursor" : "<leader><F12>",
+\    "eval_visual" : "<Leader>e",
+\}
 
 let g:ctrlp_user_command = ['.git', 'bash -c "cd %s && git ls-files -co --exclude-standard"']
 
@@ -309,9 +349,8 @@ map <Leader>e :NERDTreeFind<CR>
 set clipboard=unnamed
 let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_command = "goimports"
-set updatetime=100
+" set updatetime=100
 let g:go_fmt_fail_silently = 1
-let g:go_auto_type_info = 1
 
 let g:NERDTreeQuitOnOpen = 1
 
@@ -329,6 +368,8 @@ augroup phpSyntaxOverride
 augroup END
 
 map <leader>t :TagbarOpenAutoClose<CR>
+
+" set re=1
 
 """ END
 
