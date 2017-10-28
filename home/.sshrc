@@ -20,7 +20,8 @@ cd "$KONFIG_DIR"
 
 if ! git status > /dev/null 2>&1; then
     echo "$NAME is not installed. Downloading..."
-    git clone https://github.com/kirillrogovoy/konfig.git .
+    git clone --recursive https://github.com/kirillrogovoy/konfig.git .
+    git submodule update
 else
     echo "Updating..."
     git pull origin master
