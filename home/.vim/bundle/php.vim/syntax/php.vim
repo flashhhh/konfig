@@ -34,10 +34,12 @@
 "
 " Options:  php_sql_query = 1  for SQL syntax highlighting inside strings (default: 0)
 "           php_sql_heredoc = 1 for SQL syntax highlighting inside heredocs (default: 1)
+"           php_sql_nowdoc = 1 for SQL syntax highlighting inside nowdocs (default: 1)
 "           b:sql_type_override = 'postgresql' for PostgreSQL syntax highlighting in current buffer (default: 'mysql')
 "           g:sql_type_default = 'postgresql' to set global SQL syntax highlighting language default (default: 'mysql')"
 "           php_html_in_strings = 1  for HTML syntax highlighting inside strings (default: 0)
 "           php_html_in_heredoc = 1 for HTML syntax highlighting inside heredocs (default: 1)
+"           php_html_in_nowdoc = 1 for HTML syntax highlighting inside nowdocs (default: 1)
 "           php_html_load = 1 for loading the HTML syntax at all.  Overwrites php_html_in_strings and php_html_in_heredoc (default: 1)
 "           php_ignore_phpdoc = 0 for not highlighting parts of phpDocs
 "           php_parent_error_close = 1  for highlighting parent error ] or ) (default: 0)
@@ -100,6 +102,10 @@ if (exists("php_html_load") && php_html_load)
     let php_html_in_heredoc=1
   endif
 
+  if !exists("php_html_in_nowdoc")
+    let php_html_in_nowdoc=1
+  endif
+
   runtime! syntax/html.vim
   unlet! b:current_syntax
   " HTML syntax file turns on spelling for all top level words, we attempt to turn off
@@ -108,9 +114,10 @@ if (exists("php_html_load") && php_html_load)
   syn cluster htmlPreproc add=phpRegion
 else
   " If it is desired that the HTML syntax file not be loaded at all, set the options for highlighting it in string
-  " and heredocs to false.
+  " heredocs and nowdocs to false.
   let php_html_in_strings=0
   let php_html_in_heredoc=0
+  let php_html_in_nowdoc=0
 endif
 
 if (exists("php_html_in_strings") && php_html_in_strings)
@@ -130,7 +137,11 @@ if !exists("php_sql_heredoc")
   let php_sql_heredoc=1
 endif
 
-if ((exists("php_sql_query") && php_sql_query) || (exists("php_sql_heredoc") && php_sql_heredoc))
+if !exists("php_sql_nowdoc")
+  let php_sql_nowdoc=1
+endif
+
+if ((exists("php_sql_query") && php_sql_query) || (exists("php_sql_heredoc") && php_sql_heredoc) || (exists("php_sql_nowdoc") && php_sql_nowdoc))
   " Use MySQL as the default SQL syntax file.
   " See https://github.com/StanAngeloff/php.vim/pull/1
   if !exists('b:sql_type_override') && !exists('g:sql_type_default')
@@ -551,12 +562,18 @@ syn region phpIdentifierArray    matchgroup=phpParent start="\[" end="]" contain
 syn keyword phpBoolean true false  contained
 
 " Number
-syn match phpNumber "-\=\<\d\+\>" contained display
+syn match phpNumber "\<\d\+\>" contained display
+syn match phpNumber "-\d\+\>" contained display
 syn match phpNumber "\<0x\x\{1,8}\>"  contained display
+syn match phpNumber "-0x\x\{1,8}\>"  contained display
 syn match phpNumber "\<0b[01]\+\>"    contained display
+syn match phpNumber "-0b[01]\+\>"    contained display
+syn match phpNumber "\<\d\+\%([eE][+-]\=\d\+\)\=\>" contained display
+syn match phpNumber "-\d\+\%([eE][+-]\=\d\+\)\=\>" contained display
 
 " Float
-syn match phpNumber "\(-\=\<\d+\|-\=\)\.\d\+\>" contained display
+syn match phpNumber "\<\%(\d\+\.\d\+\|\d\+\.\|\.\d\+\)\%([eE][+-]\=\d\+\)\=\>" contained display
+syn match phpNumber "-\%(\d\+\.\d\+\|\d\+\.\|\.\d\+\)\%([eE][+-]\=\d\+\)\=\>" contained display
 
 " SpecialChar
 syn match phpSpecialChar "\\[fnrtv\\]" contained display
@@ -602,7 +619,7 @@ if !exists("php_ignore_phpdoc") || !php_ignore_phpdoc
 
   syn region phpDocTags  start="{@\(example\|id\|internal\|inheritdoc\|link\|source\|toc\|tutorial\)" end="}" containedin=phpDocComment
   syn match phpDocTags "@\%(abstract\|access\|api\|author\|brief\|bug\|category\|class\|copyright\|created\|date\|deprecated\|details\|example\|exception\|file\|filesource\|final\|global\|id\|ignore\|inheritdoc\|internal\|license\|link\|magic\|method\|name\|package\|param\|property\|return\|see\|since\|source\|static\|staticvar\|struct\|subpackage\|throws\|toc\|todo\|tutorial\|type\|uses\|var\|version\|warning\)" containedin=phpDocComment nextgroup=phpDocParam,phpDocIdentifier skipwhite contained
-  syn match phpDocParam "\s\+\zs\%(\h\w*|\?\)\+" nextgroup=phpDocIdentifier skipwhite contained
+  syn match phpDocParam "\s\+\zs\(\\\|\h\w*\)*\h\w*" nextgroup=phpDocIdentifier skipwhite contained
   syn match phpDocIdentifier "\s\+\zs$\h\w*" contained
 
   syn case match
@@ -645,6 +662,14 @@ endif
 
 " NowDoc
 SynFold syn region phpNowDoc matchgroup=Delimiter start=+\(<<<\)\@<='\z(\I\i*\)'$+ end="^\z1\(;\=$\)\@=" contained keepend extend
+
+if (exists("php_sql_nowdoc") && php_sql_nowdoc)
+  SynFold syn region phpNowDoc matchgroup=Delimiter start=+\(<<<\)\@<='\z(\(\I\i*\)\=\(sql\)\c\(\i*\)\)'$+ end="^\z1\(;\=$\)\@=" contained contains=@sqlTop,phpIdentifier,phpIdentifierSimply,phpIdentifierComplex,phpSpecialChar,phpMethodsVar,phpStrEsc keepend extend
+endif
+if (exists("php_html_in_nowdoc") && php_html_in_nowdoc)
+  SynFold syn region phpNowDoc matchgroup=Delimiter start=+\(<<<\)\@<='\z(\(\I\i*\)\=\(html\)\c\(\i*\)\)'$+ end="^\z1\(;\=$\)\@=" contained contains=@htmlTop,phpIdentifier,phpIdentifierSimply,phpIdentifierComplex,phpSpecialChar,phpMethodsVar,phpStrEsc keepend extend
+  SynFold syn region phpNowDoc matchgroup=Delimiter start=+\(<<<\)\@<='\z(\(\I\i*\)\=\(javascript\)\c\(\i*\)\)'$+ end="^\z1\(;\=$\)\@=" contained contains=@htmlJavascript,phpIdentifier,phpIdentifierSimply,phpIdentifierComplex,phpSpecialChar,phpMethodsVar,phpStrEsc keepend extend
+endif
 
 syn case ignore
 

@@ -43,7 +43,6 @@ function! ale#fix#ApplyQueuedFixes() abort
             if empty(&buftype)
                 noautocmd :w!
             else
-                call writefile(l:data.output, 'fix_test_file')
                 set nomodified
             endif
         endif
@@ -57,7 +56,9 @@ function! ale#fix#ApplyQueuedFixes() abort
 
     " If ALE linting is enabled, check for problems with the file again after
     " fixing problems.
-    if g:ale_enabled && l:should_lint
+    if g:ale_enabled
+    \&& l:should_lint
+    \&& !ale#events#QuitRecently(l:buffer)
         call ale#Queue(0, l:data.should_save ? 'lint_file' : '')
     endif
 endfunction
@@ -97,6 +98,11 @@ function! s:HandleExit(job_id, exit_code) abort
     endif
 
     let l:job_info = remove(s:job_info_map, a:job_id)
+    let l:buffer = l:job_info.buffer
+
+    if g:ale_history_enabled
+        call ale#history#SetExitCode(l:buffer, a:job_id, a:exit_code)
+    endif
 
     if has_key(l:job_info, 'file_to_read')
         let l:job_info.output = readfile(l:job_info.file_to_read)
@@ -109,7 +115,7 @@ function! s:HandleExit(job_id, exit_code) abort
     \   : l:job_info.input
 
     call s:RunFixer({
-    \   'buffer': l:job_info.buffer,
+    \   'buffer': l:buffer,
     \   'input': l:input,
     \   'callback_list': l:job_info.callback_list,
     \   'callback_index': l:job_info.callback_index + 1,
@@ -155,7 +161,7 @@ function! s:CreateTemporaryFileForJob(buffer, temporary_file, input) abort
     " Automatically delete the directory later.
     call ale#fix#ManageDirectory(a:buffer, l:temporary_directory)
     " Write the buffer out to a file.
-    call writefile(a:input, a:temporary_file)
+    call ale#util#Writefile(a:buffer, a:input, a:temporary_file)
 
     return 1
 endfunction
@@ -187,9 +193,9 @@ function! s:RunJob(options) abort
     if l:read_temporary_file
         " TODO: Check that a temporary file is set here.
         let l:job_info.file_to_read = l:temporary_file
-    elseif l:output_stream ==# 'stderr'
+    elseif l:output_stream is# 'stderr'
         let l:job_options.err_cb = function('s:GatherOutput')
-    elseif l:output_stream ==# 'both'
+    elseif l:output_stream is# 'both'
         let l:job_options.out_cb = function('s:GatherOutput')
         let l:job_options.err_cb = function('s:GatherOutput')
     else
@@ -208,6 +214,12 @@ function! s:RunJob(options) abort
         endwhile
     else
         let l:job_id = ale#job#Start(l:command, l:job_options)
+    endif
+
+    let l:status = l:job_id ? 'started' : 'failed'
+
+    if g:ale_history_enabled
+        call ale#history#Add(l:buffer, l:status, l:job_id, l:command)
     endif
 
     if l:job_id == 0
@@ -321,7 +333,7 @@ function! ale#fix#InitBufferData(buffer, fixing_flag) abort
     \   'lines_before': getbufline(a:buffer, 1, '$'),
     \   'filename': expand('#' . a:buffer . ':p'),
     \   'done': 0,
-    \   'should_save': a:fixing_flag ==# 'save_file',
+    \   'should_save': a:fixing_flag is# 'save_file',
     \   'temporary_directory_list': [],
     \}
 endfunction
@@ -336,14 +348,14 @@ function! ale#fix#Fix(...) abort
 
     let l:fixing_flag = get(a:000, 0, '')
 
-    if l:fixing_flag !=# '' && l:fixing_flag !=# 'save_file'
+    if l:fixing_flag isnot# '' && l:fixing_flag isnot# 'save_file'
         throw "fixing_flag must be either '' or 'save_file'"
     endif
 
     let l:callback_list = s:GetCallbacks()
 
     if empty(l:callback_list)
-        if l:fixing_flag ==# ''
+        if l:fixing_flag is# ''
             echoerr 'No fixers have been defined. Try :ALEFixSuggest'
         endif
 

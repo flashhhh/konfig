@@ -21,7 +21,7 @@ cal add(g:ctrlp_ext_vars, {
 
 let s:id = g:ctrlp_builtins + len(g:ctrlp_ext_vars)
 " Utilities {{{1
-fu! s:findcount(str, tgaddr)
+fu! s:findcount(str)
 	let [tg, ofname] = split(a:str, '\t\+\ze[^\t]\+$')
 	let tgs = taglist('^'.tg.'$')
 	if len(tgs) < 2
@@ -48,13 +48,7 @@ fu! s:findcount(str, tgaddr)
 	for tgi in ntgs
 		let cnt += 1
 		if tgi["filename"] == ofname
-			if a:tgaddr != ""
-				if a:tgaddr == tgi["cmd"]
-					let [fnd, pos] = [0, cnt]
-				en
-			else
-				let [fnd, pos] = [0, cnt]
-			en
+			let [fnd, pos] = [0, cnt]
 		en
 	endfo
 	retu [1, fnd, pos, len(ctgs)]
@@ -98,9 +92,8 @@ endf
 
 fu! ctrlp#tag#accept(mode, str)
 	cal ctrlp#exit()
-	let tgaddr = matchstr(a:str, '^[^\t]\+\t\+[^\t]\+\t\zs[^\t]\{-1,}\ze\%(;"\)\?\t')
 	let str = matchstr(a:str, '^[^\t]\+\t\+[^\t]\+\ze\t')
-	let [tg, fdcnt] = [split(str, '^[^\t]\+\zs\t')[0], s:findcount(str, tgaddr)]
+	let [tg, fdcnt] = [split(str, '^[^\t]\+\zs\t')[0], s:findcount(str)]
 	let cmds = {
 		\ 't': ['tab sp', 'tab stj'],
 		\ 'h': ['sp', 'stj'],
@@ -128,7 +121,6 @@ fu! ctrlp#tag#accept(mode, str)
 		en
 		cal feedkeys(":".cmd." ".tg."\r".ext, 'nt')
 	en
-	cal feedkeys('zvzz', 'nt')
 	cal ctrlp#setlcdir()
 endf
 

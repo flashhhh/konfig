@@ -6,7 +6,6 @@
 
 " Static variables {{{1
 let [s:mrbs, s:mrufs] = [[], []]
-let s:mruf_map_string = '!stridx(v:val, cwd) ? strpart(v:val, idx) : v:val'
 
 fu! ctrlp#mrufiles#opts()
 	let [pref, opts] = ['g:ctrlp_mruf_', {
@@ -16,7 +15,6 @@ fu! ctrlp#mrufiles#opts()
 		\ 'case_sensitive': ['s:cseno', 1],
 		\ 'relative': ['s:re', 0],
 		\ 'save_on_update': ['s:soup', 1],
-		\ 'map_string': ['g:ctrlp_mruf_map_string', s:mruf_map_string],
 		\ }]
 	for [ke, va] in items(opts)
 		let [{va[0]}, {pref.ke}] = [pref.ke, exists(pref.ke) ? {pref.ke} : va[1]]
@@ -53,7 +51,7 @@ fu! s:reformat(mrufs, ...)
 		let cwd = tr(cwd, '\', '/')
 		cal map(a:mrufs, 'tr(v:val, "\\", "/")')
 	en
-	retu map(a:mrufs, g:ctrlp_mruf_map_string)
+	retu map(a:mrufs, '!stridx(v:val, cwd) ? strpart(v:val, idx) : v:val')
 endf
 
 fu! s:record(bufnr)
@@ -68,12 +66,10 @@ fu! s:record(bufnr)
 endf
 
 fu! s:addtomrufs(fname)
-	let fn = fnamemodify(a:fname, get(g:, 'ctrlp_tilde_homedir', 0) ? ':p:~' : ':p')
+	let fn = fnamemodify(a:fname, ':p')
 	let fn = exists('+ssl') ? tr(fn, '/', '\') : fn
-	let abs_fn = fnamemodify(fn,':p')
 	if ( !empty({s:in}) && fn !~# {s:in} ) || ( !empty({s:ex}) && fn =~# {s:ex} )
-		\ || !empty(getbufvar('^' . abs_fn . '$', '&bt')) || !filereadable(abs_fn)
-		retu
+		\ || !empty(getbufvar('^'.fn.'$', '&bt')) || !filereadable(fn) | retu
 	en
 	let idx = index(s:mrufs, fn, 0, !{s:cseno})
 	if idx
@@ -147,7 +143,7 @@ fu! ctrlp#mrufiles#init()
 	let s:locked = 0
 	aug CtrlPMRUF
 		au!
-		au BufWinEnter,BufWinLeave,BufWritePost * cal s:record(expand('<abuf>', 1))
+		au BufAdd,BufEnter,BufLeave,BufWritePost * cal s:record(expand('<abuf>', 1))
 		au QuickFixCmdPre  *vimgrep* let s:locked = 1
 		au QuickFixCmdPost *vimgrep* let s:locked = 0
 		au VimLeavePre * cal s:savetofile(s:mergelists())

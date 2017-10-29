@@ -1,10 +1,13 @@
 " Author: w0rp <devw0rp@gmail.com>
 " Description: Echoes lint message for the current line, if any
 
+let s:cursor_timer = -1
+let s:last_pos = [0, 0, 0]
+
 " Return a formatted message according to g:ale_echo_msg_format variable
 function! s:GetMessage(linter, type, text) abort
     let l:msg = g:ale_echo_msg_format
-    let l:type = a:type ==# 'E'
+    let l:type = a:type is# 'E'
     \   ? g:ale_echo_msg_error_str
     \   : g:ale_echo_msg_warning_str
 
@@ -22,12 +25,12 @@ function! s:EchoWithShortMess(setting, message) abort
 
     try
         " Turn shortmess on or off.
-        if a:setting ==# 'on'
+        if a:setting is# 'on'
             setlocal shortmess+=T
             " echomsg is needed for the message to get truncated and appear in
             " the message history.
             exec "norm! :echomsg a:message\n"
-        elseif a:setting ==# 'off'
+        elseif a:setting is# 'off'
             setlocal shortmess-=T
             " Regular echo is needed for printing newline characters.
             echo a:message
@@ -50,10 +53,12 @@ function! ale#cursor#TruncatedEcho(message) abort
 endfunction
 
 function! s:FindItemAtCursor() abort
-    let l:info = get(g:ale_buffer_info, bufnr('%'), {'loclist': []})
+    let l:buf = bufnr('')
+    let l:info = get(g:ale_buffer_info, l:buf, {})
+    let l:loclist = get(l:info, 'loclist', [])
     let l:pos = getcurpos()
-    let l:index = ale#util#BinarySearch(l:info.loclist, l:pos[1], l:pos[2])
-    let l:loc = l:index >= 0 ? l:info.loclist[l:index] : {}
+    let l:index = ale#util#BinarySearch(l:loclist, l:buf, l:pos[1], l:pos[2])
+    let l:loc = l:index >= 0 ? l:loclist[l:index] : {}
 
     return [l:info, l:loc]
 endfunction
@@ -66,12 +71,16 @@ function! s:StopCursorTimer() abort
 endfunction
 
 function! ale#cursor#EchoCursorWarning(...) abort
-    if ale#ShouldDoNothing(bufnr(''))
+    return ale#CallWithCooldown('dont_echo_until', function('s:EchoImpl'), [])
+endfunction
+
+function! s:EchoImpl() abort
+    " Only echo the warnings in normal mode, otherwise we will get problems.
+    if mode() isnot# 'n'
         return
     endif
 
-    " Only echo the warnings in normal mode, otherwise we will get problems.
-    if mode() !=# 'n'
+    if ale#ShouldDoNothing(bufnr(''))
         return
     endif
 
@@ -89,11 +98,9 @@ function! ale#cursor#EchoCursorWarning(...) abort
     endif
 endfunction
 
-let s:cursor_timer = -1
-let s:last_pos = [0, 0, 0]
-
 function! ale#cursor#EchoCursorWarningWithDelay() abort
-    if ale#ShouldDoNothing(bufnr(''))
+    " Only echo the warnings in normal mode, otherwise we will get problems.
+    if mode() isnot# 'n'
         return
     endif
 
@@ -106,18 +113,23 @@ function! ale#cursor#EchoCursorWarningWithDelay() abort
     " we should echo something. Otherwise we can end up doing processing
     " the echo message far too frequently.
     if l:pos != s:last_pos
+        let l:delay = ale#Var(bufnr(''), 'echo_delay')
+
         let s:last_pos = l:pos
-        let s:cursor_timer = timer_start(10, function('ale#cursor#EchoCursorWarning'))
+        let s:cursor_timer = timer_start(
+        \   l:delay,
+        \   function('ale#cursor#EchoCursorWarning')
+        \)
     endif
 endfunction
 
 function! ale#cursor#ShowCursorDetail() abort
-    if ale#ShouldDoNothing(bufnr(''))
+    " Only echo the warnings in normal mode, otherwise we will get problems.
+    if mode() isnot# 'n'
         return
     endif
 
-    " Only echo the warnings in normal mode, otherwise we will get problems.
-    if mode() !=# 'n'
+    if ale#ShouldDoNothing(bufnr(''))
         return
     endif
 

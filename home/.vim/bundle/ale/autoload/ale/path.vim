@@ -7,6 +7,26 @@ function! ale#path#Simplify(path) abort
     return substitute(simplify(a:path), '^//\+', '/', 'g') " no-custom-checks
 endfunction
 
+" This function is mainly used for testing.
+" Simplify() a path, and change forward slashes to back slashes on Windows.
+"
+" If an additional 'add_drive' argument is given, the current drive letter
+" will be prefixed to any absolute paths on Windows.
+function! ale#path#Winify(path, ...) abort
+    let l:new_path = ale#path#Simplify(a:path)
+
+    if has('win32')
+        let l:new_path = substitute(l:new_path, '/', '\\', 'g')
+
+        " Add a drive letter to \foo\bar paths, if needed.
+        if a:0 && a:1 is# 'add_drive' && l:new_path[:0] is# '\'
+            let l:new_path = fnamemodify('.', ':p')[:1] . l:new_path
+        endif
+    endif
+
+    return l:new_path
+endfunction
+
 " Given a buffer and a filename, find the nearest file by searching upwards
 " through the paths relative to the given buffer.
 function! ale#path#FindNearestFile(buffer, filename) abort
@@ -65,44 +85,47 @@ endfunction
 " Return 1 if a path is an absolute path.
 function! ale#path#IsAbsolute(filename) abort
     " Check for /foo and C:\foo, etc.
-    return a:filename[:0] ==# '/' || a:filename[1:2] ==# ':\'
+    return a:filename[:0] is# '/' || a:filename[1:2] is# ':\'
 endfunction
+
+let s:temp_dir = fnamemodify(tempname(), ':h')
 
 " Given a filename, return 1 if the file represents some temporary file
 " created by Vim.
 function! ale#path#IsTempName(filename) abort
-    let l:prefix_list = [
-    \   $TMPDIR,
-    \   resolve($TMPDIR),
-    \   '/run/user',
-    \]
+    return a:filename[:len(s:temp_dir) - 1] is# s:temp_dir
+endfunction
 
-    for l:prefix in l:prefix_list
-        if a:filename[:len(l:prefix) - 1] ==# l:prefix
-            return 1
-        endif
-    endfor
+" Given a base directory, which must not have a trailing slash, and a
+" filename, which may have an absolute path a path relative to the base
+" directory, return the absolute path to the file.
+function! ale#path#GetAbsPath(base_directory, filename) abort
+    if ale#path#IsAbsolute(a:filename)
+        return a:filename
+    endif
 
-    return 0
+    let l:sep = has('win32') ? '\' : '/'
+
+    return ale#path#Simplify(a:base_directory . l:sep . a:filename)
 endfunction
 
 " Given a buffer number and a relative or absolute path, return 1 if the
 " two paths represent the same file on disk.
 function! ale#path#IsBufferPath(buffer, complex_filename) abort
     " If the path is one of many different names for stdin, we have a match.
-    if a:complex_filename ==# '-'
-    \|| a:complex_filename ==# 'stdin'
-    \|| a:complex_filename[:0] ==# '<'
+    if a:complex_filename is# '-'
+    \|| a:complex_filename is# 'stdin'
+    \|| a:complex_filename[:0] is# '<'
         return 1
     endif
 
     let l:test_filename = ale#path#Simplify(a:complex_filename)
 
-    if l:test_filename[:1] ==# './'
+    if l:test_filename[:1] is# './'
         let l:test_filename = l:test_filename[2:]
     endif
 
-    if l:test_filename[:1] ==# '..'
+    if l:test_filename[:1] is# '..'
         " Remove ../../ etc. from the front of the path.
         let l:test_filename = substitute(l:test_filename, '\v^(\.\.[/\\])+', '/', '')
     endif
@@ -114,8 +137,8 @@ function! ale#path#IsBufferPath(buffer, complex_filename) abort
 
     let l:buffer_filename = expand('#' . a:buffer . ':p')
 
-    return l:buffer_filename ==# l:test_filename
-    \   || l:buffer_filename[-len(l:test_filename):] ==# l:test_filename
+    return l:buffer_filename is# l:test_filename
+    \   || l:buffer_filename[-len(l:test_filename):] is# l:test_filename
 endfunction
 
 " Given a path, return every component of the path, moving upwards.
@@ -133,7 +156,7 @@ function! ale#path#Upwards(path) abort
     if ale#Has('win32') && a:path =~# '^[a-zA-z]:\'
         " Add \ to C: for C:\, etc.
         let l:path_list[-1] .= '\'
-    elseif a:path[0] ==# '/'
+    elseif a:path[0] is# '/'
         " If the path starts with /, even on Windows, add / and / to all paths.
         call map(l:path_list, '''/'' . v:val')
         call add(l:path_list, '/')
@@ -146,10 +169,10 @@ endfunction
 " relatives paths will not be prefixed with the protocol.
 " For Windows paths, the `:` in C:\ etc. will not be percent-encoded.
 function! ale#path#ToURI(path) abort
-    let l:has_drive_letter = a:path[1:2] ==# ':\'
+    let l:has_drive_letter = a:path[1:2] is# ':\'
 
     return substitute(
-    \   ((l:has_drive_letter || a:path[:0] ==# '/') ? 'file://' : '')
+    \   ((l:has_drive_letter || a:path[:0] is# '/') ? 'file://' : '')
     \       . (l:has_drive_letter ? '/' . a:path[:2] : '')
     \       . ale#uri#Encode(l:has_drive_letter ? a:path[3:] : a:path),
     \   '\\',
@@ -160,7 +183,7 @@ endfunction
 
 function! ale#path#FromURI(uri) abort
     let l:i = len('file://')
-    let l:encoded_path = a:uri[: l:i - 1] ==# 'file://' ? a:uri[l:i :] : a:uri
+    let l:encoded_path = a:uri[: l:i - 1] is# 'file://' ? a:uri[l:i :] : a:uri
 
     return ale#uri#Decode(l:encoded_path)
 endfunction

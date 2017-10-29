@@ -52,7 +52,8 @@ The EditorConfig Vim plugin supports the following EditorConfig [properties][]:
 ## Recommended Options
 
 All of the options which are supported are documented in [editorconfig.txt][]
-and can be viewed by executing the following: `:help editorconfig`.
+and can be viewed by executing the following: `:help editorconfig`. You may
+need to execute `:helptags ALL` so that Vim is aware of editorconfig.txt.
 
 #### Excluded patterns.
 
@@ -68,6 +69,16 @@ If you wanted to avoid loading EditorConfig for any remote files over ssh:
 Of course these two items could be combined into the following:
 
 > let g:EditorConfig_exclude_patterns = ['fugitive://.\*', 'scp://.\*']
+
+#### Disable rules
+
+You might want to override some project-specific EditorConfig rules in global
+or local vimrc in some cases, e.g., to resolve coflicts of trailing whitespace 
+trimming and buffer autosaving.
+
+> let g:EditorConfig_disable_rules = ['trim_trailing_whitespace']
+
+You are able to disable any supported EditorConfig properties.
 
 #### Exec Path
 

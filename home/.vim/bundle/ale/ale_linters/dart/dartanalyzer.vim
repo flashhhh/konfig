@@ -13,7 +13,7 @@ function! ale_linters#dart#dartanalyzer#GetCommand(buffer) abort
 
     return ale#Escape(l:executable)
     \   . (!empty(l:path) ? ' --packages ' . ale#Escape(l:path) : '')
-    \   . ' %t'
+    \   . ' %s'
 endfunction
 
 function! ale_linters#dart#dartanalyzer#Handle(buffer, lines) abort
@@ -22,7 +22,7 @@ function! ale_linters#dart#dartanalyzer#Handle(buffer, lines) abort
 
     for l:match in ale#util#GetMatches(a:lines, l:pattern)
         call add(l:output, {
-        \   'type': l:match[1] ==# 'error' ? 'E' : 'W',
+        \   'type': l:match[1] is# 'error' ? 'E' : 'W',
         \   'text': l:match[6] . ': ' . l:match[2],
         \   'lnum': str2nr(l:match[4]),
         \   'col': str2nr(l:match[5]),
@@ -37,4 +37,5 @@ call ale#linter#Define('dart', {
 \   'executable_callback': 'ale_linters#dart#dartanalyzer#GetExecutable',
 \   'command_callback': 'ale_linters#dart#dartanalyzer#GetCommand',
 \   'callback': 'ale_linters#dart#dartanalyzer#Handle',
+\   'lint_file': 1,
 \})

@@ -52,7 +52,7 @@ endfunction
 " - https://groups.google.com/forum/#!searchin/vim_dev/matchadd$20conceal/vim_dev/8bKa98GhHdk/VOzIBhd1m8YJ
 let s:can_preserve_syntax = s:has_patch(7, 4, 792)
 
-" s:move() moves cursor over/accross window with Hit-A-Hint feature like
+" s:move() moves cursor over/across window with Hit-A-Hint feature like
 " vim-easymotion
 " @param {dict} config
 function! s:move(pattern, ...) abort
@@ -135,7 +135,7 @@ function! s:move_to_winpos(winpos) abort
   let is_win_moved = !(winnr is# winnr())
   if is_win_moved
     if exists('#WinLeave')
-      doautocmd WinLeave *
+      silent doautocmd WinLeave
     endif
     call s:move_to_win(winnr)
   else
@@ -143,7 +143,7 @@ function! s:move_to_winpos(winpos) abort
   endif
   call cursor(pos)
   if is_win_moved && exists('#WinEnter')
-    doautocmd WinEnter *
+    silent doautocmd WinEnter
   endif
 endfunction
 

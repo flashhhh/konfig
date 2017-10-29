@@ -35,7 +35,7 @@ hi link shebang Comment
 
 " Statement Keywords {{{
 syntax keyword javaScriptSource         import export from
-syntax keyword javaScriptIdentifier     arguments this let var void yield
+syntax keyword javaScriptIdentifier     arguments this let var void yield async await const
 syntax keyword javaScriptOperator       delete new instanceof typeof
 syntax keyword javaScriptBoolean        true false
 syntax keyword javaScriptNull           null undefined
@@ -50,10 +50,10 @@ syntax keyword javaScriptPrototype      prototype
 syntax keyword javaScriptStatement      return with
 syntax keyword javaScriptGlobalObjects  Array Boolean Date Function Math Number Object RegExp String
 syntax keyword javaScriptExceptions     try catch throw finally Error EvalError RangeError ReferenceError SyntaxError TypeError URIError
-syntax keyword javaScriptReserved       abstract enum int short boolean export interface static byte extends long super char final native synchronized class float package throws const goto private transient debugger implements protected volatile double import public
+syntax keyword javaScriptReserved       abstract enum int short boolean export interface static byte extends long super char final native synchronized class float package throws goto private transient debugger implements protected volatile double import public
 "}}}
 " Comments {{{
-syntax keyword javaScriptCommentTodo      TODO FIXME XXX TBD contained
+syntax keyword javaScriptCommentTodo      TODO FIXME XXX TBD OPTIMIZE HACK REVIEW contained
 syntax match   javaScriptLineComment      "\/\/.*" contains=@Spell,javaScriptCommentTodo
 syntax match   javaScriptCommentSkip      "^[ \t]*\*\($\|[ \t]\+\)"
 syntax region  javaScriptComment          start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo
@@ -168,7 +168,7 @@ endif
 " Function and arguments highlighting {{{
 syntax keyword javaScriptFuncKeyword     function contained
 syntax region  javaScriptFuncExp         start=/\w\+\s\==\s\=function\>/ end="\([^)]*\)" contains=javaScriptFuncEq,javaScriptFuncKeyword,javaScriptFuncArg keepend
-syntax match   javaScriptFuncArg         "\(([^()]*)\)" contains=javaScriptParens,javaScriptFuncComma contained
+syntax match   javaScriptFuncArg         "\(([^()]*)\)" contains=javaScriptParens,javaScriptFuncComma,javaScriptComment contained
 syntax match   javaScriptFuncComma       /,/ contained
 syntax match   javaScriptFuncEq          /=/ contained
 syntax region  javaScriptFuncDef         start="\<function\>" end="\([^)]*\)" contains=javaScriptFuncKeyword,javaScriptFuncArg keepend

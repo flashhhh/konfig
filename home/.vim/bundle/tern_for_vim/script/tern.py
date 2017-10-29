@@ -28,7 +28,10 @@ def tern_makeRequest(port, doc, silent=False):
   if not PY2:
     payload = payload.encode('utf-8')
   try:
-    req = opener.open("http://localhost:" + str(port) + "/", payload,
+    localhost = 'localhost'
+    if platform.system().lower()=='windows':
+        localhost = '127.0.0.1'
+    req = opener.open("http://" + localhost + ":" + str(port) + "/", payload,
                       float(vim.eval("g:tern_request_timeout")))
     result = req.read()
     if not PY2:
@@ -145,6 +148,8 @@ def tern_relativeFile():
   filename = vim.eval("expand('%:p')")
   if PY2:
     filename = filename.decode(vim.eval('&encoding'))
+  if platform.system().lower()=='windows':
+    return filename[len(tern_projectDir()) + 1:].replace('\\', '/')
   return filename[len(tern_projectDir()) + 1:]
 
 def tern_bufferSlice(buf, pos, end):
@@ -174,7 +179,7 @@ def tern_bufferFragment():
       start = i
 
   if start is None: start = max(0, line - 50)
-  end = min(len(buf) - 1, line + 20)
+  end = min(len(buf), line + 20)
   return {"type": "part",
           "name": tern_relativeFile(),
           "text": tern_bufferSlice(buf, start, end),
@@ -264,8 +269,15 @@ def tern_ensureCompletionCached():
       (not re.match(".*\\W", curLine[int(cached["end"]):curCol]))):
     return
 
-  data = tern_runCommand({"type": "completions", "types": True, "docs": True},
-                         {"line": curRow - 1, "ch": curCol})
+  ternRequestQuery = vim.eval('g:tern_request_query')
+  ternCompletionQuery = ternRequestQuery.get('completions')
+
+  if ternCompletionQuery is None:
+    ternCompletionQuery = dict()
+
+  completionQuery = dict({"type": "completions", "types": True, "docs": True}, **ternCompletionQuery)
+
+  data = tern_runCommand(completionQuery, {"line": curRow - 1, "ch": curCol})
   if data is None: return
 
   completions = []
@@ -307,7 +319,7 @@ def tern_lookupDocumentation(browse=False):
         return result
     doc = ((doc and doc + "\n\n") or "") + "See " + url
   if doc:
-    vim.command("call tern#PreviewInfo(" + json.dumps(doc) + ")")
+    vim.command("call tern#PreviewInfo(" + json.dumps(doc, ensure_ascii=False) + ")")
   else:
     print("no documentation found")
 
@@ -369,7 +381,14 @@ def tern_refs():
                  "col": col,
                  "filename": filename,
                  "text": name + " (file not loaded)" if len(text)==0 else text[0]})
-  vim.command("call setloclist(0," + json.dumps(refs) + ") | lopen")
+
+  vim.command("call setloclist(0," + json.dumps(refs) + ")")
+  if vim.eval("g:tern_show_loc_after_refs") == '1':
+    vim.command("lopen")
+  else:
+    curRow, curCol = vim.current.window.cursor
+    index = next((i for i,ref in enumerate(refs) if ref["lnum"] == curRow), None)
+    if index is not None: vim.command(str(index + 1) + "ll")
 
 # Copied here because Python 2.6 and lower don't have it built in, and
 # python 3.0 and higher don't support old-style cmp= args to the sort
@@ -443,4 +462,11 @@ def tern_rename(newName):
       external.append({"name": file, "text": "".join(lines), "type": "full"})
   if len(external):
     tern_sendBuffer(external)
-  vim.command("call setloclist(0," + json.dumps(changes) + ") | lopen")
+
+  vim.command("call setloclist(0," + json.dumps(changes) + ")")
+  if vim.eval("g:tern_show_loc_after_rename") == '1':
+    vim.command("lopen")
+  else:
+    curRow, curCol = vim.current.window.cursor
+    index = next((i for i,change in enumerate(changes) if change["lnum"] == curRow), None)
+    if index is not None: vim.command(str(index + 1) + "ll")

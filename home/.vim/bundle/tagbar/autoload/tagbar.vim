@@ -670,7 +670,7 @@ function! s:OpenWindow(flags) abort
         return 0
     endif
 
-    " Expand the Vim window to accomodate for the Tagbar window if requested
+    " Expand the Vim window to accommodate for the Tagbar window if requested
     " and save the window positions to be able to restore them later.
     if g:tagbar_expand >= 1 && !s:window_expanded &&
      \ (has('gui_running') || g:tagbar_expand == 2)
@@ -985,12 +985,21 @@ function! s:ProcessFile(fname, ftype) abort
         let tempfile .= '.' . ext
     endif
 
-    call writefile(getbufline(fileinfo.bufnr, 1, '$'), tempfile)
+    call tagbar#debug#log('Caching file into: ' . tempfile)
+    let templines = getbufline(fileinfo.bufnr, 1, '$')
+    let res = writefile(templines, tempfile)
+
+    if res != 0
+        call tagbar#debug#log('Could not create copy '.tempfile)
+        return
+    endif
     let fileinfo.mtime = getftime(tempfile)
 
     let ctags_output = s:ExecuteCtagsOnFile(tempfile, a:fname, typeinfo)
 
-    call delete(tempfile)
+    if !tagbar#debug#enabled()
+        call delete(tempfile)
+    endif
 
     if ctags_output == -1
         call tagbar#debug#log('Ctags error when processing file')
@@ -1087,6 +1096,11 @@ function! s:ExecuteCtagsOnFile(fname, realfname, typeinfo) abort
                           \ '--sort=no',
                           \ '--append=no'
                           \ ]
+
+        " verbose if debug enabled
+        if tagbar#debug#enabled()
+            let ctags_args += [ '-V' ]
+        endif
 
         " Include extra type definitions
         if has_key(a:typeinfo, 'deffile')
@@ -3182,7 +3196,15 @@ function! TagbarBalloonExpr() abort
         return ''
     endif
 
-    return taginfo.getPrototype(0)
+    let prototype = taginfo.getPrototype(0)
+    if has('multi_byte')
+        if g:tagbar_systemenc != &encoding
+            let prototype = iconv(prototype, &encoding, g:tagbar_systemenc)
+        elseif $LANG != ''
+            let prototype = iconv(prototype, &encoding, $LANG)
+        endif
+    endif
+    return prototype
 endfunction
 
 " Autoload functions {{{1

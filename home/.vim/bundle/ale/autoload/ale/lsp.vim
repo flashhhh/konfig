@@ -190,17 +190,17 @@ function! ale#lsp#HandleOtherInitializeResponses(conn, response) abort
         return
     endif
 
-    if get(a:response, 'method', '') ==# ''
+    if get(a:response, 'method', '') is# ''
         if has_key(get(a:response, 'result', {}), 'capabilities')
             for [l:dir, l:project] in l:uninitialized_projects
                 call s:MarkProjectAsInitialized(a:conn, l:project)
             endfor
         endif
-    elseif get(a:response, 'method', '') ==# 'textDocument/publishDiagnostics'
+    elseif get(a:response, 'method', '') is# 'textDocument/publishDiagnostics'
         let l:filename = ale#path#FromURI(a:response.params.uri)
 
         for [l:dir, l:project] in l:uninitialized_projects
-            if l:filename[:len(l:dir) - 1] ==# l:dir
+            if l:filename[:len(l:dir) - 1] is# l:dir
                 call s:MarkProjectAsInitialized(a:conn, l:project)
             endif
         endfor
@@ -215,7 +215,7 @@ function! ale#lsp#HandleMessage(conn, message) abort
 
     " Call our callbacks.
     for l:response in l:response_list
-        if get(l:response, 'method', '') ==# 'initialize'
+        if get(l:response, 'method', '') is# 'initialize'
             call s:HandleInitializeResponse(a:conn, l:response)
         else
             call ale#lsp#HandleOtherInitializeResponses(a:conn, l:response)
@@ -242,15 +242,25 @@ function! s:HandleCommandMessage(job_id, message) abort
     call ale#lsp#HandleMessage(l:conn, a:message)
 endfunction
 
-function! s:RegisterProject(conn, project_root) abort
-    if !has_key(a:conn.projects, a:project_root)
+function! ale#lsp#RegisterProject(conn, project_root) abort
+    " Empty strings can't be used for Dictionary keys in NeoVim, due to E713.
+    " This appears to be a nonsensical bug in NeoVim.
+    let l:key = empty(a:project_root) ? '<<EMPTY>>' : a:project_root
+
+    if !has_key(a:conn.projects, l:key)
         " Tools without project roots are ready right away, like tsserver.
-        let a:conn.projects[a:project_root] = {
+        let a:conn.projects[l:key] = {
         \   'initialized': empty(a:project_root),
         \   'init_request_id': 0,
         \   'message_queue': [],
         \}
     endif
+endfunction
+
+function! ale#lsp#GetProject(conn, project_root) abort
+    let l:key = empty(a:project_root) ? '<<EMPTY>>' : a:project_root
+
+    return get(a:conn.projects, l:key, {})
 endfunction
 
 " Start a program for LSP servers which run with executables.
@@ -285,7 +295,7 @@ function! ale#lsp#StartProgram(executable, command, project_root, callback) abor
     let l:conn.id = l:job_id
     " Add the callback to the List if it's not there already.
     call uniq(sort(add(l:conn.callback_list, a:callback)))
-    call s:RegisterProject(l:conn, a:project_root)
+    call ale#lsp#RegisterProject(l:conn, a:project_root)
 
     return l:job_id
 endfunction
@@ -296,7 +306,7 @@ function! ale#lsp#ConnectToAddress(address, project_root, callback) abort
     " Get the current connection or a new one.
     let l:conn = !empty(l:conn) ? l:conn : s:NewConnection()
 
-    if !has_key(l:conn, 'channel') || ch_status(l:conn.channel) !=# 'open'
+    if !has_key(l:conn, 'channel') || ch_status(l:conn.channel) isnot# 'open'
         let l:conn.channnel = ch_open(a:address, {
         \   'mode': 'raw',
         \   'waittime': 0,
@@ -304,14 +314,14 @@ function! ale#lsp#ConnectToAddress(address, project_root, callback) abort
         \})
     endif
 
-    if ch_status(l:conn.channnel) ==# 'fail'
+    if ch_status(l:conn.channnel) is# 'fail'
         return 0
     endif
 
     let l:conn.id = a:address
     " Add the callback to the List if it's not there already.
     call uniq(sort(add(l:conn.callback_list, a:callback)))
-    call s:RegisterProject(l:conn, a:project_root)
+    call ale#lsp#RegisterProject(l:conn, a:project_root)
 
     return 1
 endfunction
@@ -319,7 +329,7 @@ endfunction
 function! s:SendMessageData(conn, data) abort
     if has_key(a:conn, 'executable')
         call ale#job#SendRaw(a:conn.id, a:data)
-    elseif has_key(a:conn, 'channel') && ch_status(a:conn.channnel) ==# 'open'
+    elseif has_key(a:conn, 'channel') && ch_status(a:conn.channnel) is# 'open'
         " Send the message to the server
         call ch_sendraw(a:conn.channel, a:data)
     else
@@ -344,7 +354,7 @@ function! ale#lsp#Send(conn_id, message, ...) abort
         return 0
     endif
 
-    let l:project = get(l:conn.projects, l:project_root, {})
+    let l:project = ale#lsp#GetProject(l:conn, l:project_root)
 
     if empty(l:project)
         return 0

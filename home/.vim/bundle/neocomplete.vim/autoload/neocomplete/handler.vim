@@ -97,10 +97,6 @@ function! neocomplete#handler#_on_insert_char_pre() abort "{{{
     return
   endif
 
-  if neocomplete.old_char != ' ' && v:char == ' ' && v:count == 0
-    call s:make_cache_current_line()
-  endif
-
   let neocomplete.old_char = v:char
 endfunction"}}}
 function! neocomplete#handler#_on_text_changed() abort "{{{
@@ -316,7 +312,11 @@ endfunction"}}}
 function! s:complete_key(key) abort "{{{
   call neocomplete#helper#complete_configure()
 
-  call feedkeys(a:key)
+  if has('patch-7.4.601')
+    call feedkeys(a:key, 'i')
+  else
+    call feedkeys(a:key)
+  endif
 endfunction"}}}
 
 function! s:indent_current_line() abort "{{{
