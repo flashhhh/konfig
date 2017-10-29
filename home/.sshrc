@@ -47,7 +47,7 @@ if which tmux > /dev/null; then
     echo "tmux is installed (`tmux -V 2>&1`)."
     if ! tmux attach -t ssh; then
         echo "Starting new tmux session"
-        tmux new-session -s ssh
+        tmux new-session -s ssh $SHELL
     fi
 else
     echo "tmux is not installed."
