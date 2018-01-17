@@ -75,6 +75,9 @@ set novisualbell
 set t_vb=
 set tm=500
 
+" Preserve the cursor's position on various operations such as buffer switch
+set nostartofline
+
 " Properly disable sound on errors on MacVim
 if has("gui_macvim")
     autocmd GUIEnter * set vb t_vb=
@@ -222,13 +225,14 @@ try
 catch
 endtry
 
+let g:ctrlp_user_command = ['.git', 'bash -c "cd %s && git ls-files -co --exclude-standard"']
+let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:30,results:30'
+
 " Include dotfiles to CtrlP results
 let g:ctrlp_dotfiles = 1
 
-" Change default mappings for CtrlP
-" let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_map = '<Leader>p'
-map <Leader>P :CtrlPBuffer<CR>
+map <Leader>P :CtrlPTag<CR>
 
 " Enable JSDoc highlight
 let g:javascript_plugin_jsdoc = 1
@@ -252,16 +256,26 @@ hi! def link BufTabLineHidden  StatusLineNC
 hi! def link CursorLine StatusLineNC
 
 let g:AutoPairsMoveCharacter = ""
-map <F1> <Plug>BufTabLine.Go(1)
-map <F2> <Plug>BufTabLine.Go(2)
-map <F3> <Plug>BufTabLine.Go(3)
-map <F4> <Plug>BufTabLine.Go(4)
-map <F5> <Plug>BufTabLine.Go(5)
-map <F6> <Plug>BufTabLine.Go(6)
-map <F7> <Plug>BufTabLine.Go(7)
-map <F8> <Plug>BufTabLine.Go(8)
-map <F9> <Plug>BufTabLine.Go(9)
-map § :b#<CR>
+nmap <F1> <Plug>BufTabLine.Go(1)
+nmap <F2> <Plug>BufTabLine.Go(2)
+nmap <F3> <Plug>BufTabLine.Go(3)
+nmap <F4> <Plug>BufTabLine.Go(4)
+nmap <F5> <Plug>BufTabLine.Go(5)
+nmap <F6> <Plug>BufTabLine.Go(6)
+nmap <F7> <Plug>BufTabLine.Go(7)
+nmap <F8> <Plug>BufTabLine.Go(8)
+nmap <F9> <Plug>BufTabLine.Go(9)
+nmap § :b#<CR>
+
+nmap <leader><F1> <F1><leader>bd
+nmap <leader><F2> <F2><leader>bd
+nmap <leader><F3> <F3><leader>bd
+nmap <leader><F4> <F4><leader>bd
+nmap <leader><F5> <F5><leader>bd
+nmap <leader><F6> <F6><leader>bd
+nmap <leader><F7> <F7><leader>bd
+nmap <leader><F8> <F8><leader>bd
+nmap <leader><F9> <F9><leader>bd
 
 let g:ale_lint_on_enter = 0
 
@@ -335,8 +349,6 @@ let g:vdebug_keymap = {
 \    "eval_visual" : "<Leader>e",
 \}
 
-let g:ctrlp_user_command = ['.git', 'bash -c "cd %s && git ls-files -co --exclude-standard"']
-
 set ttyfast
 
 set spell
@@ -368,6 +380,7 @@ augroup phpSyntaxOverride
 augroup END
 
 map <leader>t :TagbarOpenAutoClose<CR>
+let g:tagbar_sort = 0
 
 " set re=1
 
