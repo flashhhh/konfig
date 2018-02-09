@@ -118,8 +118,8 @@ set smarttab
 set shiftwidth=4
 set tabstop=4
 
-" Force 2 spaces in javascript files
 au FileType javascript setl sw=2 sts=2 et
+au FileType yaml setl sw=2 sts=2 et
 
 " Linebreak on 500 characters
 set lbr
