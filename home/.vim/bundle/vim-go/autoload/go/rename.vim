@@ -72,7 +72,11 @@ function! go#rename#Rename(bang, ...) abort
 endfunction
 
 function s:rename_job(args)
+  let exited = 0
+  let closed = 0
+  let exitval = 0
   let messages = []
+
   function! s:callback(chan, msg) closure
     call add(messages, a:msg)
   endfunction
@@ -80,6 +84,9 @@ function s:rename_job(args)
   let status_dir =  expand('%:p:h')
 
   function! s:exit_cb(job, exitval) closure
+    let exited = 1
+    let exitval = a:exitval
+
     let status = {
           \ 'desc': 'last status',
           \ 'type': "gorename",
@@ -92,17 +99,24 @@ function s:rename_job(args)
 
     call go#statusline#Update(status_dir, status)
 
-    call s:parse_errors(a:exitval, a:args.bang, messages)
+    if closed
+      call s:parse_errors(a:exitval, a:args.bang, messages)
+    endif
+  endfunction
+
+  function! s:close_cb(ch) closure
+    let closed = 1
+
+    if exited
+      call s:parse_errors(exitval, a:args.bang, messages)
+    endif
   endfunction
 
   let start_options = {
         \ 'callback': funcref("s:callback"),
         \ 'exit_cb': funcref("s:exit_cb"),
+        \ 'close_cb': funcref("s:close_cb"),
         \ }
-
-  " modify GOPATH if needed
-  let old_gopath = $GOPATH
-  let $GOPATH = go#path#Detect()
 
   call go#statusline#Update(status_dir, {
         \ 'desc': "current status",
@@ -111,8 +125,6 @@ function s:rename_job(args)
         \})
 
   call job_start(a:args.cmd, start_options)
-
-  let $GOPATH = old_gopath
 endfunction
 
 function s:parse_errors(exit_val, bang, out)

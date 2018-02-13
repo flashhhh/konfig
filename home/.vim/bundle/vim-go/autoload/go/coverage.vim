@@ -51,7 +51,7 @@ function! go#coverage#Buffer(bang, ...) abort
   if go#util#has_job()
     call s:coverage_job({
           \ 'cmd': ['go', 'test', '-coverprofile', l:tmpname] + a:000,
-          \ 'custom_cb': function('s:coverage_callback', [l:tmpname]),
+          \ 'complete': function('s:coverage_callback', [l:tmpname]),
           \ 'bang': a:bang,
           \ 'for': 'GoTest',
           \ })
@@ -95,9 +95,9 @@ function! go#coverage#Clear() abort
   if exists("s:toggle") | let s:toggle = 0 | endif
 
   " remove the autocmd we defined
-  if exists("#BufWinLeave#<buffer>")
-    autocmd! BufWinLeave <buffer>
-  endif
+  augroup vim-go-coverage
+    autocmd!
+  augroup end
 endfunction
 
 " Browser creates a new cover profile with 'go test -coverprofile' and opens
@@ -107,7 +107,7 @@ function! go#coverage#Browser(bang, ...) abort
   if go#util#has_job()
     call s:coverage_job({
           \ 'cmd': ['go', 'test', '-coverprofile', l:tmpname],
-          \ 'custom_cb': function('s:coverage_browser_callback', [l:tmpname]),
+          \ 'complete': function('s:coverage_browser_callback', [l:tmpname]),
           \ 'bang': a:bang,
           \ 'for': 'GoTest',
           \ })
@@ -258,7 +258,10 @@ function! go#coverage#overlay(file) abort
   endfor
 
   " clear the matches if we leave the buffer
-  autocmd BufWinLeave <buffer> call go#coverage#Clear()
+  augroup vim-go-coverage
+    autocmd!
+    autocmd BufWinLeave <buffer> call go#coverage#Clear()
+  augroup end
 
   for m in matches
     call matchaddpos(m.group, m.pos)
@@ -275,7 +278,8 @@ function s:coverage_job(args)
   call go#cmd#autowrite()
 
   let status_dir =  expand('%:p:h')
-  function! s:error_info_cb(job, exit_status, data) closure
+  let Complete = a:args.complete
+  function! s:complete(job, exit_status, data) closure
     let status = {
           \ 'desc': 'last status',
           \ 'type': "coverage",
@@ -287,19 +291,17 @@ function s:coverage_job(args)
     endif
 
     call go#statusline#Update(status_dir, status)
+    return Complete(a:job, a:exit_status, a:data)
   endfunction
 
-  let a:args.error_info_cb = funcref('s:error_info_cb')
+  let a:args.complete = funcref('s:complete')
   let callbacks = go#job#Spawn(a:args)
 
   let start_options = {
         \ 'callback': callbacks.callback,
         \ 'exit_cb': callbacks.exit_cb,
+        \ 'close_cb': callbacks.close_cb,
         \ }
-
-  " modify GOPATH if needed
-  let old_gopath = $GOPATH
-  let $GOPATH = go#path#Detect()
 
   " pre start
   let dir = getcwd()
@@ -317,7 +319,6 @@ function s:coverage_job(args)
 
   " post start
   execute cd . fnameescape(dir)
-  let $GOPATH = old_gopath
 endfunction
 
 " coverage_callback is called when the coverage execution is finished

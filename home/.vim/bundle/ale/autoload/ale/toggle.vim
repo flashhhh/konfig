@@ -4,9 +4,7 @@ function! ale#toggle#InitAuGroups() abort
 
     augroup ALEPatternOptionsGroup
         autocmd!
-        if g:ale_enabled && g:ale_pattern_options_enabled
-            autocmd BufEnter,BufRead * call ale#pattern_options#SetOptions()
-        endif
+        autocmd BufEnter,BufRead * call ale#pattern_options#SetOptions(str2nr(expand('<abuf>')))
     augroup END
 
     augroup ALERunOnTextChangedGroup
@@ -49,9 +47,7 @@ function! ale#toggle#InitAuGroups() abort
 
     augroup ALERunOnSaveGroup
         autocmd!
-        if (g:ale_enabled && g:ale_lint_on_save) || g:ale_fix_on_save
-            autocmd BufWritePost * call ale#events#SaveEvent(str2nr(expand('<abuf>')))
-        endif
+        autocmd BufWritePost * call ale#events#SaveEvent(str2nr(expand('<abuf>')))
     augroup END
 
     augroup ALERunOnInsertLeave
@@ -73,11 +69,6 @@ function! ale#toggle#InitAuGroups() abort
     augroup END
 
     if !g:ale_enabled
-        if !g:ale_fix_on_save
-            augroup! ALERunOnSaveGroup
-        endif
-
-        augroup! ALEPatternOptionsGroup
         augroup! ALERunOnTextChangedGroup
         augroup! ALERunOnEnterGroup
         augroup! ALERunOnInsertLeave
@@ -88,7 +79,7 @@ endfunction
 function! s:EnablePreamble() abort
     " Set pattern options again, if enabled.
     if g:ale_pattern_options_enabled
-        call ale#pattern_options#SetOptions()
+        call ale#pattern_options#SetOptions(bufnr(''))
     endif
 
     " Lint immediately, including running linters against the file.
@@ -110,25 +101,28 @@ function! s:DisablePostamble() abort
     endif
 endfunction
 
+function! s:CleanupEveryBuffer() abort
+    for l:key in keys(g:ale_buffer_info)
+        " The key could be a filename or a buffer number, so try and
+        " convert it to a number. We need a number for the other
+        " functions.
+        let l:buffer = str2nr(l:key)
+
+        if l:buffer > 0
+            " Stop all jobs and clear the results for everything, and delete
+            " all of the data we stored for the buffer.
+            call ale#engine#Cleanup(l:buffer)
+        endif
+    endfor
+endfunction
+
 function! ale#toggle#Toggle() abort
     let g:ale_enabled = !get(g:, 'ale_enabled')
 
     if g:ale_enabled
         call s:EnablePreamble()
     else
-        for l:key in keys(g:ale_buffer_info)
-            " The key could be a filename or a buffer number, so try and
-            " convert it to a number. We need a number for the other
-            " functions.
-            let l:buffer = str2nr(l:key)
-
-            if l:buffer > 0
-                " Stop all jobs and clear the results for everything, and delete
-                " all of the data we stored for the buffer.
-                call ale#engine#Cleanup(l:buffer)
-            endif
-        endfor
-
+        call s:CleanupEveryBuffer()
         call s:DisablePostamble()
     endif
 
@@ -139,7 +133,7 @@ function! ale#toggle#Enable() abort
     if !g:ale_enabled
         " Set pattern options again, if enabled.
         if g:ale_pattern_options_enabled
-            call ale#pattern_options#SetOptions()
+            call ale#pattern_options#SetOptions(bufnr(''))
         endif
 
         call ale#toggle#Toggle()
@@ -152,6 +146,11 @@ function! ale#toggle#Disable() abort
     endif
 endfunction
 
+function! ale#toggle#Reset() abort
+    call s:CleanupEveryBuffer()
+    call ale#highlight#UpdateHighlights()
+endfunction
+
 function! ale#toggle#ToggleBuffer(buffer) abort
     " Get the new value for the toggle.
     let l:enabled = !getbufvar(a:buffer, 'ale_enabled', 1)
@@ -159,7 +158,7 @@ function! ale#toggle#ToggleBuffer(buffer) abort
     " Disabling ALE globally removes autocmd events, so we cannot enable
     " linting locally when linting is disabled globally
     if l:enabled && !g:ale_enabled
-        echom 'ALE cannot be enabled locally when disabled globally'
+        execute 'echom ''ALE cannot be enabled locally when disabled globally'''
         return
     endif
 
@@ -171,7 +170,6 @@ function! ale#toggle#ToggleBuffer(buffer) abort
         " Stop all jobs and clear the results for everything, and delete
         " all of the data we stored for the buffer.
         call ale#engine#Cleanup(a:buffer)
-
         call s:DisablePostamble()
     endif
 endfunction
@@ -187,4 +185,9 @@ function! ale#toggle#DisableBuffer(buffer) abort
     if getbufvar(a:buffer, 'ale_enabled', 1)
         call ale#toggle#ToggleBuffer(a:buffer)
     endif
+endfunction
+
+function! ale#toggle#ResetBuffer(buffer) abort
+    call ale#engine#Cleanup(a:buffer)
+    call ale#highlight#UpdateHighlights()
 endfunction

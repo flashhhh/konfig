@@ -41,6 +41,7 @@ let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
 let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
 let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
 let g:buftabline_show       = get(g:, 'buftabline_show',       2)
+let g:buftabline_plug_max   = get(g:, 'buftabline_plug_max',  10)
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -125,12 +126,12 @@ function! buftabline#render()
 
 	" 3. toss away tabs and pieces until all fits:
 	if ( lft.width + rgt.width ) > &columns
-		let [oversized, remainder]
-		\ = lft.width < lft.half ? [ [rgt], &columns - lft.width ]
-		\ : rgt.width < rgt.half ? [ [lft], &columns - rgt.width ]
-		\ :                        [ [lft, rgt], 0 ]
-		for side in oversized
-			let delta = side.width - ( remainder ? remainder : side.half )
+		let oversized
+		\ = lft.width < lft.half ? [ [ rgt, &columns - lft.width ] ]
+		\ : rgt.width < rgt.half ? [ [ lft, &columns - rgt.width ] ]
+		\ :                        [ [ lft, lft.half ], [ rgt, rgt.half ] ]
+		for [side, budget] in oversized
+			let delta = side.width - budget
 			" toss entire tabs to close the distance
 			while delta >= tabs[side.lasttab].width
 				let delta -= remove(tabs, side.lasttab).width
@@ -150,7 +151,7 @@ function! buftabline#render()
 	return swallowclicks . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,strtrans(v:val.label))'),'') . '%#BufTabLineFill#'
 endfunction
 
-function! buftabline#update(deletion)
+function! buftabline#update(zombie)
 	set tabline=
 	if tabpagenr('$') > 1 | set guioptions+=e showtabline=2 | return | endif
 	set guioptions-=e
@@ -158,35 +159,24 @@ function! buftabline#update(deletion)
 		set showtabline=1
 		return
 	elseif 1 == g:buftabline_show
-		let bufnums = buftabline#user_buffers()
-		let total = len(bufnums)
-		if a:deletion && -1 < index(bufnums, bufnr('%'))
-			" BufDelete triggers before buffer is deleted
-			" so if current buffer is a user buffer, it must be subtracted
-			let total -= 1
-		endif
-		let &g:showtabline = 1 + ( total > 1 )
+		" account for BufDelete triggering before buffer is actually deleted
+		let bufnums = filter(buftabline#user_buffers(), 'v:val != a:zombie')
+		let &g:showtabline = 1 + ( len(bufnums) > 1 )
 	elseif 2 == g:buftabline_show
 		set showtabline=2
 	endif
 	set tabline=%!buftabline#render()
 endfunction
 
-autocmd BufAdd    * call buftabline#update(0)
-autocmd BufDelete * call buftabline#update(1)
-autocmd TabEnter  * call buftabline#update(0)
 autocmd VimEnter  * call buftabline#update(0)
+autocmd TabEnter  * call buftabline#update(0)
+autocmd BufAdd    * call buftabline#update(0)
+autocmd BufDelete * call buftabline#update(str2nr(expand('<abuf>')))
 
-noremap <silent> <Plug>BufTabLine.Go(1)  :exe 'b'.get(buftabline#user_buffers(),0,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(2)  :exe 'b'.get(buftabline#user_buffers(),1,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(3)  :exe 'b'.get(buftabline#user_buffers(),2,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(4)  :exe 'b'.get(buftabline#user_buffers(),3,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(5)  :exe 'b'.get(buftabline#user_buffers(),4,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(6)  :exe 'b'.get(buftabline#user_buffers(),5,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(7)  :exe 'b'.get(buftabline#user_buffers(),6,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(8)  :exe 'b'.get(buftabline#user_buffers(),7,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(9)  :exe 'b'.get(buftabline#user_buffers(),8,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(10) :exe 'b'.get(buftabline#user_buffers(),9,'')<cr>
+for s:n in range(1, g:buftabline_plug_max)
+    execute printf("noremap <silent> <Plug>BufTabLine.Go(%d) :exe 'b'.get(buftabline#user_buffers(),%d,'')<cr>", s:n, s:n - 1)
+endfor
+unlet s:n
 
 if v:version < 703
 	function s:transpile()

@@ -275,16 +275,18 @@ def tern_ensureCompletionCached():
   if ternCompletionQuery is None:
     ternCompletionQuery = dict()
 
-  completionQuery = dict({"type": "completions", "types": True, "docs": True}, **ternCompletionQuery)
+  ignorecase = int(vim.eval('&ignorecase'))
+  completionQuery = dict({"caseInsensitive": bool(ignorecase), "type": "completions", "types": True, "docs": True}, **ternCompletionQuery)
 
   data = tern_runCommand(completionQuery, {"line": curRow - 1, "ch": curCol})
   if data is None: return
 
   completions = []
   for rec in data["completions"]:
-    completions.append({"word": rec["name"],
-                        "menu": tern_asCompletionIcon(rec.get("type")),
-                        "info": tern_typeDoc(rec) })
+    completions.append({"word":  rec["name"],
+                        "icase": ignorecase,
+                        "menu":  tern_asCompletionIcon(rec.get("type")),
+                        "info":  tern_typeDoc(rec) })
   vim.command("let b:ternLastCompletion = " + json.dumps(completions))
   start, end = (data["start"]["ch"], data["end"]["ch"])
   vim.command("let b:ternLastCompletionPos = " + json.dumps({
@@ -430,6 +432,8 @@ def tern_rename(newName):
     buffer = None
     for buf in vim.buffers:
       if buf.name == file:
+        buffer = buf
+      if platform.system().lower()=='windows' and buf.name == file.replace('/', '\\'):
         buffer = buf
 
     if buffer is not None:

@@ -3,7 +3,7 @@
 "          File:  php.vim
 "        Author:  Alvan
 "      Modifier:  Alvan
-"      Modified:  2017-08-13
+"      Modified:  2018-01-31
 "   Description:  PHP Manual for Vim
 "
 " -- }}}

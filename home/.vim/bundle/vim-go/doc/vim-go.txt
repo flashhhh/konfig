@@ -57,7 +57,8 @@ tools developed by the Go community to provide a seamless Vim experience.
   * Advanced source analysis tools utilizing `guru`, such as |:GoImplements|,
     |:GoCallees|, and |:GoReferrers|.
   * Precise type-safe renaming of identifiers with |:GoRename|.
-  * Integrated and improved snippets, supporting `ultisnips` or `neosnippet`.
+  * Integrated and improved snippets, supporting `ultisnips`, `neosnippet`,
+    and `vim-minisnip`.
   * Share your current code to play.golang.org with |:GoPlay|.
   * On-the-fly information about the word under the cursor. Plug it into your
     custom Vim function.
@@ -125,9 +126,9 @@ Supported Go plugins~                                         *vim-go-plugins*
 The following plugins are supported for use with vim-go:
 
 * Real-time completion (Vim):
-  https://github.com/Shougo/neocomplete.vim 
+  https://github.com/Shougo/neocomplete.vim
 
-* Real-time completion (Neovim):
+* Real-time completion (Neovim and Vim 8):
   https://github.com/Shougo/deoplete.nvim and
   https://github.com/zchee/deoplete-go
 
@@ -136,7 +137,8 @@ The following plugins are supported for use with vim-go:
 
 * Snippets:
   https://github.com/Shougo/neosnippet.vim or
-  https://github.com/SirVer/ultisnips
+  https://github.com/SirVer/ultisnips or
+  https://github.com/joereynolds/vim-minisnip
 
 * For a better documentation viewer check out:
   https://github.com/garyburd/go-explorer
@@ -147,7 +149,8 @@ The following plugins are supported for use with vim-go:
 * Interactive |:GoDecls| and |:GoDeclsDir|:
   https://github.com/ctrlpvim/ctrlp.vim or
   https://github.com/junegunn/fzf.vim or
-  https://github.com/Shougo/unite.vim
+  https://github.com/Shougo/unite.vim or
+  https://github.com/Shougo/denite.nvim
 
 ==============================================================================
 COMMANDS                                                         *go-commands*
@@ -197,7 +200,8 @@ COMMANDS                                                         *go-commands*
 :GoDocBrowser [word]
 
     Open the relevant GoDoc in browser for either the word[s] passed to the
-    command or by default, the word under the cursor.
+    command or by default, the word under the cursor. By default it opens the
+    documentation in 'https://godoc.org'. To change it see |'g:go_doc_url'|.
 
                                                                       *:GoFmt*
 :GoFmt
@@ -566,13 +570,13 @@ CTRL-t
                                                                  *:GoFreevars*
 :GoFreevars
 
-    Enumerates the free variables of the selection. “Free variables” is a
+    Enumerates the free variables of the selection. "Free variables" is a
     technical term meaning the set of variables that are referenced but not
     defined within the selection, or loosely speaking, its inputs.
 
-    This information is useful if you’re considering whether to refactor the
+    This information is useful when considering whether to refactor the
     selection into a function of its own, as the free variables would be the
-    necessary parameters of that function.  It’s also useful when you want to
+    necessary parameters of that function. It's also useful when you want to
     understand what the inputs are to a complex block of code even if you
     don’t plan to change it.
 
@@ -684,7 +688,7 @@ CTRL-t
     Requires `ctrlp.vim` or `fzf`; it will autodetect the plugin if installed,
     but you can use |'g:go_decls_mode'| to force using one or the other.
     By default `type` and `func` declarations are shown. This can be changed
-    via |'g:go_decls_includes'|. Also see |unite-decls|.
+    via |'g:go_decls_includes'|. Also see |unite-decls|, |denite-decls|.
 
                                                                  *:GoDeclsDir*
 :GoDeclsDir [dir]
@@ -693,20 +697,27 @@ CTRL-t
     [dir] is given it parses the given directory.
 
                                                                  *unite-decls*
-:Unite decls[:file or dir]
+                                                                *denite-decls*
+:Unite decls[:path]
+:Denite decls[:path]
 
-    Only enabled if `unite.vim` is installed. Show declarations for all
-    functions and types on the current file or directory.  If [:file or dir]
-    is non empty, it parses the given one.
+    Only enabled if `unite.vim` or `denite.nvim` is installed. Show
+    declarations for all functions and types on the current file or directory
+    or for [path] if given.
+
+    Note: `denite.nvim` requires NeoVim or Vim 8 with |:python3| enabled.
 >
     " show declarations on the parent directory of the current file
     :Unite decls
+    :Denite decls
 
-    " show declarations on the file
+    " show declarations in the file.
     :Unite decls:foo/bar.go
+    :Denite decls:foo/bar.go
 
-    " show declarations on the directory
+    " show declarations in the directory "foo".
     :Unite decls:foo
+    :Denite decls:foo
 <
                                                                      *:GoImpl*
 :GoImpl [receiver] [interface]
@@ -785,6 +796,9 @@ CTRL-t
 :GoMetaLinterAutoSaveToggle
 
     Toggles |'g:go_metalinter_autosave'|.
+
+    By default, `gometalinter` messages will be shown in the |location-list|
+    window. The list to use can be set using |'g:go_list_type_commands'|.
 
                                                  *:GoTemplateAutoCreateToggle*
 :GoTemplateAutoCreateToggle
@@ -1091,6 +1105,14 @@ into the statusline. This function is also used for |'g:go_auto_type_info'|.
 ==============================================================================
 SETTINGS                                                        *go-settings*
 
+                                                      *'g:go_test_show_name'*
+
+Show the name of each failed test before the errors and logs output by the
+test. By default it is disabled.
+>
+  let g:go_test_show_name = 0
+<
+
                                                          *'g:go_test_timeout'*
 
 Use this option to change the test timeout of |:GoTest|. By default it is
@@ -1181,11 +1203,11 @@ used >
 Use this option to add additional options to the |'g:go_fmt_command'|. It's
 value type can be either a string or a dictionary. This is due backwards
 compatibility. The string version will be removed in the future so please use
-the dictionary version. Default is empty. 
+the dictionary version. Default is empty.
 >
   let g:go_fmt_options = ''
 
-  or 
+  or
 
   let g:go_fmt_options = {}
 <
@@ -1226,6 +1248,14 @@ is enabled. >
 Maximum height for the GoDoc window created with |:GoDoc|. Default is 20. >
 
   let g:go_doc_max_height = 20
+<
+
+                                                              *'g:go_doc_url'*
+
+godoc server URL used when |:GoDocBrowser| is used. Change if you want to use
+a private internal service. Default is 'https://godoc.org'.
+>
+  let g:go_doc_url = 'https://godoc.org'
 <
 
                                                              *'g:go_def_mode'*
@@ -1270,10 +1300,16 @@ Use this option to change default path for vim-go tools when using
 <
                                                        *'g:go_snippet_engine'*
 
-Use this option to define the default snippet engine.  By default "ultisnips"
-is used. Use "neosnippet" for neosnippet.vim: >
+Define the snippet engine to use. The default is to auto-detect one. Valid
+values are:
 
-  let g:go_snippet_engine = "ultisnips"
+  automatic      Automatically detect a snippet engine.
+  ultisnips      https://github.com/SirVer/ultisnips
+  neosnippet     https://github.com/Shougo/neosnippet.vim
+  minisnip       https://github.com/joereynolds/vim-minisnip
+                 Note: the original at KeyboardFire/vim-minisnip won't work.
+>
+  let g:go_snippet_engine = "automatic"
 <
                                                            *'g:go_get_update'*
 
@@ -1307,13 +1343,12 @@ remove build tags. By default it's not set.
 <
                                                     *'g:go_autodetect_gopath'*
 
-Automatically modifies GOPATH for certain directory structures, such as for
-the tool `godep` which has his own dependencies via the `Godeps` folder. What
-this means is that all tools are now working with the newly modified GOPATH.
-So |:GoDef| for example jumps to the source inside the `Godeps` (vendored)
-source. Currently `godep` and `gb` is supported, in the near future more tool
-supports will be added. By default it's disabled. >
-
+Automatically modify GOPATH for certain directory structures, such as for
+the `godep` tool which stores dependencies in the `Godeps` folder. What this
+means is that all tools are now working with the newly modified GOPATH. So
+|:GoDef| for example jumps to the source inside the `Godeps` (vendored)
+source. Currently `godep` and `gb` are supported. By default it's disabled.
+>
   let g:go_autodetect_gopath = 0
 <
                                                       *'g:go_textobj_enabled'*
@@ -1339,8 +1374,12 @@ function when using the `af` text object. By default it's enabled. >
                                                   *'g:go_metalinter_autosave'*
 
 Use this option to auto |:GoMetaLinter| on save. Only linter messages for
-the active buffer will be shown. By default it's disabled >
+the active buffer will be shown.
 
+By default, `gometalinter` messages will be shown in the |location-list|
+window. The list to use can be set using |'g:go_list_type_commands'|.
+
+ By default it's disabled >
   let g:go_metalinter_autosave = 0
 <
                                           *'g:go_metalinter_autosave_enabled'*
@@ -1352,17 +1391,17 @@ default it's using `vet` and `golint`.
 <
                                                    *'g:go_metalinter_enabled'*
 
-Specifies the currently enabled linters for the |:GoMetaLinter| command. By
-default it's using `vet`, `golint` and `errcheck`.
+Specifies the linters to enable for the |:GoMetaLinter| command. By default
+it's using `vet`, `golint` and `errcheck`.
 >
   let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
 <
-                                                  *'g:go_metalinter_excludes'*
+                                                  *'g:go_metalinter_disabled'*
 
-Specifies the linters to be excluded from the |:GoMetaLinter| command. By
-default it's empty
+Specifies the linters to disable for the |:GoMetaLinter| command. By default
+it's empty
 >
-  let g:go_metalinter_excludes = []
+  let g:go_metalinter_disabled = []
 <
                                                    *'g:go_metalinter_command'*
 
@@ -1394,7 +1433,7 @@ Specifies the type of list to use for command outputs (such as errors from
 builds, results from static analysis commands, etc...). The list type for
 specific commands can be overridden with |'g:go_list_type_commands'|. The
 default value (empty) will use the appropriate kind of list for the command
-that was called. Supported values are "", "quickfix", and "locationlist". 
+that was called. Supported values are "", "quickfix", and "locationlist".
 >
   let g:go_list_type = ""
 <
@@ -1405,9 +1444,9 @@ Specifies the type of list to use for command outputs (such as errors from
 builds, results from static analysis commands, etc...). When an expected key
 is not present in the dictionary, |'g:go_list_type'| will be used instead.
 Supported keys are "GoBuild", "GoErrCheck", "GoFmt", "GoInstall", "GoLint",
-"GoMetaLinter", "GoModifyTags" (used for both :GoAddTags and :GoRemoveTags),
-"GoRename", "GoRun", and "GoTest".  Supported values for each command are
-"quickfix" and "locationlist".
+"GoMetaLinter", "GoMetaLinterAutoSave", "GoModifyTags" (used for both
+:GoAddTags and :GoRemoveTags), "GoRename", "GoRun", and "GoTest".  Supported
+values for each command are "quickfix" and "locationlist".
 >
   let g:go_list_type_commands = {}
 <
@@ -1422,7 +1461,7 @@ As an example, the following settings will change all list types to
 
 Specifies whether the quickfix/location list should be closed automatically
 in the absence of errors.  The default value is 1.
-If you prefer to keep a long running error window open, you can disable 
+If you prefer to keep a long running error window open, you can disable
 this by setting the value to 0.
 >
   let g:go_list_autoclose = 1
@@ -1557,10 +1596,10 @@ By default the template file specified by |'g:go_template_file'| is used.
 <
                                                        *'g:go_decls_includes'*
 
-Only useful if `ctrlp.vim`, `unite.vim` or `fzf` are installed. This sets
-which declarations to show for |:GoDecls| (`ctrp.vim`) and |unite-decls|
-(`unite.vim`).  It is a Comma delimited list Possible options are:
-{func,type}.  The default is: >
+Only useful if `ctrlp.vim`, `unite.vim`, `denite.nvim` or `fzf` are installed.
+This sets which declarations to show for |:GoDecls| (`ctrp.vim`),
+|unite-decls| (`unite.vim`) and |denite-decls| (`denite.nvim`).  It is a Comma
+delimited list.  Possible options are: {func,type}.  The default is: >
 
       let g:go_decls_includes = 'func,type'
 <
@@ -1693,15 +1732,23 @@ Highlight operators such as `:=` , `==`, `-=`, etc.
 <
                                                   *'g:go_highlight_functions'*
 
-Highlight function names.
+Highlight function and method declarations.
 >
   let g:go_highlight_functions = 0
 <
-                                                    *'g:go_highlight_methods'*
+                                         *'g:go_highlight_function_arguments'*
 
-Highlight method names.
+Highlight the variable names in arguments and return values in function
+declarations. Setting this implies the functionality from
+|'g:go_highlight_functions'|.
 >
-  let g:go_highlight_methods = 0
+  let g:go_highlight_function_arguments = 0
+<
+                                             *'g:go_highlight_function_calls'*
+
+Highlight function and method calls.
+>
+  let g:go_highlight_function_calls = 0
 <
                                                       *'g:go_highlight_types'*
 
@@ -1815,7 +1862,7 @@ manually, usually from an |autocommand|:
 If you have a lot of packages with the same prefix (`github.com/user`) you can
 use a single autocommand:
 >
-  autocmd BufRead /home/martin/go/src/*.go 
+  autocmd BufRead /home/martin/go/src/*.go
         \  let s:tmp = matchlist(expand('%:p'),
             \ '/home/martin/go/src/\(github.com/user/[^/]\+\)')
         \| if len(s:tmp) > 1 |  exe 'silent :GoGuruScope ' . s:tmp[1] | endif
@@ -1826,7 +1873,7 @@ Also see |:GoGuruScope| and |'g:go_guru_scope'|.
 
 Vim becomes slow while editing Go files~
 
-This is usually caused by `g:go_hilight_*` options. Try disabling them if
+This is usually caused by `g:go_highlight_*` options. Try disabling them if
 you've enabled some of them.
 
 Other common culprits are |'g:go_auto_sameids'| and |go#statusline#Show()|.
@@ -1916,23 +1963,32 @@ By default new terminals are opened in a vertical split. To change it
 ==============================================================================
 DEVELOPMENT                                               *go-development*
 
-vim-go supports test files written in VimL. Please check `autoload` folder for
-examples. If you add a new feature be sure you also include the `_test.vim`
-file next to the script. Test functions should be starting with `Test_`,
-example:
+vim-go supports test files written in VimScript; the way they're run is
+roughly similar to Go tests:
+
+- A `*.vim` file has a corresponding `*_test.vim`.
+- All functions starting with `Test_` are run as test.
+- A test is considered to be "failed" if |v:errors| has any entries. You can
+  use one of the |test-functions| to set this, or append to it directly.
+
+A simple example:
 >
  function Test_run_fmt()
    call assert_equal(expected, actual)
    ...
  endfunction
 <
-You can locally test it by running:
->
- make
-<
-This will run all tests and print either `PASS` or `FAIL` to indicate the
-final status of all tests. Additionally, each new pull request will trigger a
-new Travis-ci job.
+To run tests vim-go comes with three small helper scripts:
+
+  `scripts/install-vim`   Install a pristine Vim to `/tmp/vim-go-test/`.
+  `scripts/run-vim`       Run a Vim version from `/tmp/vim-go-test/`.
+  `scripts/test`          Run all tests with a Vim from `/tmp/vim-go-test/`.
+
+All scripts accept a Vim version as the first argument, which can be
+`vim-7.4`, `vim-8.0`, or `nvim`. You will need to install a Vim version with
+`install-vim` before you can use `run-vim` or `test`.
+
+You can install and test all Vim versions by running `make`.
 
 
 ==============================================================================
@@ -1960,4 +2016,4 @@ CREDITS                                                         *go-credits*
 * vim-go contributors: https://github.com/fatih/vim-go/graphs/contributors.
 
 
-vim:ft=help:et:ts=2:sw=2:sts=2:norl
+ vim: ft=help tw=78 et ts=2 sw=2 sts=2 norl

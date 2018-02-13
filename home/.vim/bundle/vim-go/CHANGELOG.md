@@ -1,11 +1,115 @@
 ## unplanned
 
+IMPROVEMENTS:
+
+* Add descriptions to neosnippet abbrevations.
+  [[GH-1639]](https://github.com/fatih/vim-go/pull/1639)
+* Show messages in the location list instead of the quickfix list when
+  `gometalinter` is run automatically when saving a buffer. Whether the
+  location list or quickfix list is used can be customized in the usual ways.
+  [[GH-1652]](https://github.com/fatih/vim-go/pull/1652)
+* Redraw the screen before executing blocking calls to gocode.
+  [[GH-1671]](https://github.com/fatih/vim-go/pull/1671)
+
+BUG FIXES:
+
+* Create quickfix list correctly when tests timeout.
+  [[GH-1633]](https://github.com/fatih/vim-go/pull/1633)
+* Apply `g:go_test_timeout` when running `:GoTestFunc`.
+  [[GH-1631]](https://github.com/fatih/vim-go/pull/1631)
+* The user's configured `g:go_doc_url` variable wasn't working correctly in the
+  case when the "gogetdoc" command isn't installed.
+  [[GH-1629]](https://github.com/fatih/vim-go/pull/1629)
+* Highlight format specifiers with an index (e.g. `%[2]d`).
+  [[GH-1634]](https://github.com/fatih/vim-go/pull/1634)
+* Respect `g:go_test_show_name` change for `:GoTest` when it changes during a
+  Vim session.
+  [[GH-1641]](https://github.com/fatih/vim-go/pull/1641)
+* Show `g:go_test_show_name` value for `:GoTest` failures if it's available.
+  [[GH-1641]](https://github.com/fatih/vim-go/pull/1641)
+* Make sure linter errors for the file being saved are shown in vim74 and nvim.
+  [[GH-1640]](https://github.com/fatih/vim-go/pull/1640)
+* Make sure only linter errors for the file being saved are shown in vim8.
+  Previously, all linter errors for all files in the current file's directory
+  were being shown.
+  [[GH-1640]](https://github.com/fatih/vim-go/pull/1640)
+* Make sure gometalinter is run on the given directories when arguments are
+  given to :GoMetaLinter.
+  [[GH-1640]](https://github.com/fatih/vim-go/pull/1640)
+* Do not run disabled linters with `gometalinter`.
+  [[GH-1648]](https://github.com/fatih/vim-go/pull/1648)
+* Do not prompt user to press enter after when `gometalinter` is called in
+  autosave mode.
+  [[GH-1654]](https://github.com/fatih/vim-go/pull/1654)
+* Fix potential race conditions when using vim8 jobs.
+  [[GH-1656]](https://github.com/fatih/vim-go/pull/1656)
+* Treat `'autowriteall'` the same as `'autowrite'` when determining whether to
+  write a buffer before calling some commands.
+  [[GH-1653]](https://github.com/fatih/vim-go/pull/1653)
+* Show the file location of test errors when the message is empty or begins
+  with a newline.
+  [[GH-1664]](https://github.com/fatih/vim-go/pull/1664)
+
+
 BACKWARDS INCOMPATIBILITIES:
 
-* Display a warning for Vim versions older than 7.4.1689. Older versions may
-  still work, but are not supported. You can use `let g:go_version_warning = 0`
-  to disable the warning.
-  [[GH-1524]](https://github.com/fatih/vim-go/pull/1524).
+* Highlighting function and method declarations/calls is fixed. To fix it we
+  had to remove the meaning of the previous settings. The following setting is
+  removed:
+
+  * `go_highlight_methods`
+
+  in favor of the following settings and changes: 
+
+  * `go_highlight_functions`: This highlights now all function and method
+    declarations (whereas previously it would also highlight function and
+    method calls, not anymore)
+  * `go_highlight_function_calls`: This higlights now all all function and
+    method calls.
+  [[GH-1557]](https://github.com/fatih/vim-go/pull/1557)
+* Rename g`g:go_metalinter_excludes` to `g:go_metalinter_disabled`.
+  [[GH-1648]](https://github.com/fatih/vim-go/pull/1648)
+
+## 1.16 - (December 29, 2017)
+
+FEATURES:
+
+* Add `g:go_doc_url` to change the `godoc` server from `godoc.org` to a custom
+  private instance. Currently only `godoc -http` instances are supported.
+  [[GH-1957]](https://github.com/fatih/vim-go/pull/1957).
+* New setting `g:go_test_prepend_name` (off by default) to add the failing test
+  name to the output of `:GoTest`
+  [[GH-1578]](https://github.com/fatih/vim-go/pull/1578).
+* Support [denite.vim](https://github.com/Shougo/denite.nvim) for `:GoDecls[Dir]`
+  [[GH-1604]](https://github.com/fatih/vim-go/pull/1604).
+
+IMPROVEMENTS:
+
+* `:GoRename` is a bit smarter when automatically pre-filling values, and what
+  gets pre-filled can be configured with `g:go_gorename_prefill` option.
+  In addition `:GoRename <Tab>` now lists some common options.
+  [[GH-1465]](https://github.com/fatih/vim-go/pull/1465).
+* Add support for `g:go_build_tags` to the `:GoTest` family of functions.
+  [[GH-1562]](https://github.com/fatih/vim-go/pull/1562).
+* Pass `--tests` to gometalinter when autosaving and when a custom gometalinter
+  command has not been set.
+  [[GH-1563]](https://github.com/fatih/vim-go/pull/1563).
+* Do not spam messages when command is run in a directory that does not exist.
+  [[GH-1527]](https://github.com/fatih/vim-go/pull/1527).
+* Run `syntax sync fromstart` after `:GoFmt`; this should make syntax
+  highlighting break slightly less often after formatting code
+  [[GH-1582]](https://github.com/fatih/vim-go/pull/1582).
+* `:GoDescribe` doesn't require a scope anymore
+  [[GH-1596]](https://github.com/fatih/vim-go/pull/1596).
+* Add some standard snippets for
+  [vim-minisnip](https://github.com/joereynolds/vim-minisnip)
+  [[GH-1589]](https://github.com/fatih/vim-go/pull/1589).
+* `g:go_snippet_engine` now defaults to `automatic` to use the first installed
+  snippet engine it can find.
+  [[GH-1589]](https://github.com/fatih/vim-go/pull/1589).
+* Make sure temporary files created for `:GoFmt` end with `.go` suffix as this
+  is required by some Go formatting tools
+  [[GH-1601]](https://github.com/fatih/vim-go/pull/1601).
 
 BUG FIXES:
 
@@ -16,14 +120,44 @@ BUG FIXES:
 * `:GoTestCompile` produces a test binary again. The test binary will be
   written to a temporary directory to avoid polluting the user's working
   directory. [[GH-1519]](https://github.com/fatih/vim-go/pull/1519)
+* Fix incorrect `:GoSameIdsToggle` behavior when there were match groups
+  present, but none were goSameId.
+  [[GH-1538]](https://github.com/fatih/vim-go/pull/1538)
+* Fix `gpl` snippet for UltiSnips.
+  [[GH-1535]](https://github.com/fatih/vim-go/pull/1535)
+* Fix test output processing to correctly handle panics and log statements.
+  [[GH-1513]](https://github.com/fatih/vim-go/pull/1513)
+* `:GoImpl` tab-completion would sometimes stop working
+  [[GH-1581]](https://github.com/fatih/vim-go/pull/1581).
+* Add `g:go_highlight_function_arguments` to highlight function arguments.
+  [[GH-1587]](https://github.com/fatih/vim-go/pull/1587).
+* Fix installation of `gocode` on MS-Windows.
+  [[GH-1606]](https://github.com/fatih/vim-go/pull/1606).
+* Fix template creation for files in directories that don't exist yet.
+  [[GH-1618]](https://github.com/fatih/vim-go/pull/1618).
+* Fix behavior of terminal windows and resize terminal windows correctly for
+  all valid `g:go_term_mode` values.
+  [[GH-1611]](https://github.com/fatih/vim-go/pull/1611).
 
-IMPROVEMENTS:
+BACKWARDS INCOMPATIBILITIES:
 
-* `:GoRename` is a bit smarter when automatically pre-filling values, and what
-  gets pre-filled can be configured with `g:go_gorename_prefill` option.
-  In addition `:GoRename <Tab>` now lists some common options.
-  [[GH-1465]](https://github.com/fatih/vim-go/pull/1465).
-* Disable `g:go_autodetect_gopath` by default. [[GH-1461]](https://github.com/fatih/vim-go/pull/1461).
+* Display a warning for Vim versions older than 7.4.1689. Older versions may
+  still work, but are not supported. You can use `let g:go_version_warning = 0`
+  to disable the warning.
+  [[GH-1524]](https://github.com/fatih/vim-go/pull/1524).
+* `g:go_autodetect_gopath` is *disabled* by default, as support for `vendor` has
+  been in Go for a while.<br>
+  Also change the implementation for `g:go_autodetect_gopath`; instead of manually
+  setting it before every command it will now be set with the `BufEnter` event,
+  and reset with the `BufLeave` event. This means that `$GOPATH` will be
+  changed for all commands run from Vim.
+  [[GH-1461]](https://github.com/fatih/vim-go/pull/1461) and
+  [[GH-1525]](https://github.com/fatih/vim-go/pull/1525).
+* Update `:GoFillStruct` to check the current line (vs. the exact cursor
+  position) for a struct literal to fill. To support this, fillstruct made
+  [backwards imcompatible
+  changes](https://github.com/davidrjenni/reftools/pull/8).
+  [[GH-1607]](https://github.com/fatih/vim-go/pull/1607).
 
 ## 1.15 - (October 3, 2017)
 
@@ -174,8 +308,6 @@ BACKWARDS INCOMPATIBILITIES:
   here](https://github.com/fatih/vim-go/issues/1375#issuecomment-317535953)
   [[GH-1382]](https://github.com/fatih/vim-go/pull/1382)
 
-
-
 ## 1.13 - (June 6, 2017)
 
 FEATURES:
@@ -231,7 +363,7 @@ BUG FIXES:
 * `:GoTest` is able to parse error messages that include a colon `:` [[GH-1316]](https://github.com/fatih/vim-go/pull/1316)
 * `:GoTestCompile` under the hood doesn't produces a test binary anymore. Sometimes a race condition would happen which would not delete the test binary. [[GH-1317]](https://github.com/fatih/vim-go/pull/1317)
 * `:GoDef` jumps now to definition for build tags defined with `:GoBuildTags` (only guru) [[GH-1319]](https://github.com/fatih/vim-go/pull/1319)
- 
+
 BACKWARDS INCOMPATIBILITIES:
 
 * `:GoLint` works on the whole directory instead of the current file. To use it for the current file give it as an argument, i.e `:GoLint foo.go` [[GH-1295]](https://github.com/fatih/vim-go/pull/1295)
@@ -691,7 +823,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 
-* Fix oracle scope not working if trailing slash exists in scope [[GH-751]](https://github.com/fatih/vim-go/pull/751) 
+* Fix oracle scope not working if trailing slash exists in scope [[GH-751]](https://github.com/fatih/vim-go/pull/751)
 * Fix `:GoErrCheck` checking abspath [[GH-671]](https://github.com/fatih/vim-go/pull/671)
 * Fix `:GoInstall` correctly parsing errors [[GH-692]](https://github.com/fatih/vim-go/pull/692)
 * Fix `:GoInstall` correctly parsing errors [[GH-692]](https://github.com/fatih/vim-go/pull/692)
@@ -713,13 +845,13 @@ FEATURES:
   * An async launcher and base foundation was implemented for the `go` command.
   This will be used in the future for all upcoming subcommands of the `go`
   tool.
-  * `:GoBuild` is now called asynchronously (it doesn't block the UI anymore). 
+  * `:GoBuild` is now called asynchronously (it doesn't block the UI anymore).
   * A new `go#jobcontrol#Statusline()` can be used to plug into the statusline.
   This will show the status of the job running asynchronously. The statusline
   is improved to show the status per package instead of file. Assume you have
   three files open, all belonging to the same package, if the package build
   (`:GoBuild`) is successful, all statusline's will be empty (means SUCCESS),
-  if it fails all files statusline's will show `FAILED`. 
+  if it fails all files statusline's will show `FAILED`.
   * `:GoRun` opens a new vertical terminal emulator inside Neovim and runs the
   command there. The terminal mode can be changed with `g:go_term_mode`,
   which is by default `vsplit`. Current options are `vsplit, split or tab`.
@@ -867,7 +999,7 @@ IMPROVEMENTS:
   github.com/fatih/color`. Useful if `:GoImport` fails and you want to download
   it.
 * Automatic GOPATH detections can now detect `gb` vendored folders. Some commands should now work without any problem when invoked on a `gb` project.
-* All command arguments are now properly escaped for shell invocation. 
+* All command arguments are now properly escaped for shell invocation.
 * Added the `-f` flag to :GoInstallBinaries command to support `git url.<base>.insteadOf` configuration
 * Improve width and precision highlighting, such as `%s %5s %-5s %5.5f %.5f`
 * Show an error if a region is not selected when `:GoFreeVars` is called
@@ -963,7 +1095,7 @@ IMPROVEMENTS:
 * `referrer` mode is improved to show referring lines in the quickfix window
 * A new `errt` snippet is added, which expands to `if err != nil { t.Fatal(err) }`
 * A new `errh` snippet is added, useful to be used in a `http.Handler`
-* UltiSnips snippets are improved to take advance of Vim's `Visual` mode. For example selecting a block and typing `if` will create an if scope around the block. 
+* UltiSnips snippets are improved to take advance of Vim's `Visual` mode. For example selecting a block and typing `if` will create an if scope around the block.
 * Cleanup README.md
 
 BUG FIXES:
@@ -1025,3 +1157,7 @@ the community contributions).
 ## 0.0 (Mar 24, 2014)
 
 Initial commit: https://github.com/fatih/vim-go/commit/78c5caa82c111c50e9c219f222d65b07694f8f5a
+
+<!--
+ vim: et ts=2 sw=2
+-->
