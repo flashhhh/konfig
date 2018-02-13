@@ -284,8 +284,6 @@ let g:ale_lint_on_enter = 0
 map / <Plug>(incsearch-forward)
 map ? <Plug>(incsearch-backward)
 
-" map <Right> :bnext<CR>
-" map <Left> :bprev<CR>
 map <Right> :echo "Use l!"<CR>
 map <Left> :echo "Use h!"<CR>
 map <Up> :echo "Use k!"<CR>
@@ -361,7 +359,6 @@ map <Leader>e :NERDTreeFind<CR>
 set clipboard=unnamed
 let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_command = "goimports"
-" set updatetime=100
 let g:go_fmt_fail_silently = 1
 
 let g:NERDTreeQuitOnOpen = 1
@@ -382,7 +379,15 @@ augroup END
 map <leader>t :TagbarOpenAutoClose<CR>
 let g:tagbar_sort = 0
 
-" set re=1
+let g:elm_setup_keybindings = 0
+
+let g:LanguageClient_serverCommands = {
+    \ 'php': ['php', '/Users/kirillrogovoy/.composer/vendor/felixfbecker/language-server/bin/php-language-server.php'],
+    \ }
+
+autocmd FileType php map <C-]> :call LanguageClient_textDocument_definition()<CR>
+
+let g:neocomplete#sources#omni#input_patterns = { 'php': '[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?' }
 
 """ END
 
