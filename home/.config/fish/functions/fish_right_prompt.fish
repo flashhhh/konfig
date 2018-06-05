@@ -15,4 +15,6 @@ function fish_right_prompt
     set -l whoami $blue(whoami)
 
     #echo -n -s "$red$last_status $whoami$yellow@$hostname$delim$cwd"
+    #set -l ms ms
+    #echo $cyan$CMD_DURATION$ms
 end

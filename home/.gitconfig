@@ -6,7 +6,8 @@
 	excludesfile = ~/.gitignore
 [alias]
     co = checkout
-    cm = commit -m
+    ; cm = commit -m
+    cm = "!bash ~/.konfig/scripts/git_commit.sh"
     s = status
     d = diff
 [diff]
