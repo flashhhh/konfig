@@ -1,8 +1,7 @@
 " Enable syntax highlighting
 syntax enable
 let g:solarized_contrast="low"
-let g:solarized_termtrans=0
-set background=dark
+set background=light
 colorscheme solarized
 
 set statusline+=%#StatusLineNC#
@@ -130,7 +129,7 @@ endfunction
 
 augroup TypescriptSyntaxOverride
   autocmd!
-  autocmd FileType typescript call TypescriptSyntaxOverride()
+  autocmd FileType typescript,typescriptreact call TypescriptSyntaxOverride()
 augroup END
 
 hi! def link BufTabLineCurrent StatusLine

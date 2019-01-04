@@ -16,3 +16,5 @@
 	tool = vimdiff
 [web]
 	browser = open
+[push]
+	default = current

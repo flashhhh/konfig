@@ -16,7 +16,7 @@ Plug 'vim-scripts/matchit.zip'
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
 Plug 'StanAngeloff/php.vim'
-Plug 'Townk/vim-autoclose'
+" Plug 'Townk/vim-autoclose' it conflicts with good auto-completion behavior
 Plug 'ap/vim-buftabline'
 Plug 'altercation/vim-colors-solarized'
 Plug 'easymotion/vim-easymotion'
@@ -38,6 +38,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'w0rp/ale'
 Plug 'kshenoy/vim-signature'
+Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 
 call plug#end()
 
@@ -45,9 +46,6 @@ let g:python3_host_prog = '/usr/local/bin/python3'
 
 " Ack! by default. Don't jump to the first result
 cnoreabbrev Ack Ack!
-
-" Open Ack and put the cursor in the right position
-nnoremap <leader>g :Ack
 
 " Highlight search results
 let g:ackhighlight = 1
@@ -70,36 +68,57 @@ let g:go_fmt_fail_silently = 1
 
 let g:NERDTreeQuitOnOpen = 1
 
+let g:LanguageClient_loggingFile = '/tmp/lc.txt'
+let g:LanguageClient_autoStart = 1
 let g:LanguageClient_serverCommands = {
-    \ 'javascript': ['javascript-typescript-stdio'],
-    \ 'typescript': ['javascript-typescript-stdio'],
+    \ 'javascript': ['typescript-language-server', '--stdio'],
+    \ 'typescript': ['typescript-language-server', '--stdio'],
+    \ 'javascript.jsx': ['javascript-typescript-stdio'],
+    \ 'typescript.jsx': ['javascript-typescript-stdio'],
     \ 'php': ['php', '/Users/kirillrogovoy/.composer/vendor/felixfbecker/language-server/bin/php-language-server.php'],
     \ }
 
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
+let g:deoplete#enable_smart_case = 0
+
+call deoplete#custom#option('auto_complete_delay', 100)
+call deoplete#custom#option('auto_refresh_delay', 100)
+call deoplete#custom#option('num_processes', -1)
 
 let g:deoplete#sources = {}
-let g:deoplete#sources.php = ['LanguageClient']
-let g:deoplete#sources.javascript = ['LanguageClient']
-let g:deoplete#sources.typescript = ['LanguageClient']
+" means enable all sources by default
+let g:deoplete#sources._ = []
+let g:deoplete#sources.php = ['phpcd', 'buffer', 'file', 'member']
+let g:deoplete#sources.javascript = ['LanguageClient', 'file', 'buffer']
+let g:deoplete#sources.typescript = ['LanguageClient', 'file', 'buffer']
 
 let g:fzf_command_prefix = 'Fzf'
+let $FZF_DEFAULT_COMMAND = 'ag -g ""'
 
 let g:phpfmt_autosave = 0
 
 let g:ale_lint_on_enter = 0
 let g:ale_linters = {
 \   'javascript': ['eslint'],
-\   'typescript': ['tslint'],
-\   'php': ['php -l', 'phpcs'],
+\   'typescript': ['tslint', 'tsserver', 'typecheck'],
+\   'php': ['php', 'phpstan'],
 \   'go': ['golint', 'go build', 'go type', 'go vet', 'gosimple', 'staticcheck'],
+\   'scss': ['stylelint', 'sasslint'],
 \}
 
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
 \   'typescript': ['tslint'],
+\   'scss': ['stylelint'],
 \}
 let g:ale_fix_on_save = 1
+let g:ale_typescript_tsserver_use_global = 1
 let g:ale_set_loclist = 0
 let g:LanguageClient_diagnosticsEnable = 0
+
+let g:SignatureIncludeMarks = 'abcdefghijklmnopqrstuvwxyABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+augroup FiletypeGroup
+    autocmd!
+    au BufNewFile,BufRead *.tsx set filetype=typescript.jsx
+augroup END

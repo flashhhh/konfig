@@ -1,0 +1,9 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =7
+let g:netrw_dirhist_1='/Users/kirillrogovoy/Projects/skyeng/vimbox'
+let g:netrw_dirhist_2='/Users/kirillrogovoy/Projects/skyeng/vimbox/vimbox-api'
+let g:netrw_dirhist_3='/Users/kirillrogovoy/Projects/skyeng/vimbox/vimbox-api/src'
+let g:netrw_dirhist_4='/Users/kirillrogovoy/Projects/skyeng/vimbox/vimbox-api/src/ApiBundle'
+let g:netrw_dirhist_5='/Users/kirillrogovoy/Projects/qiwipanel.loc'
+let g:netrw_dirhist_6='/Users/kirillrogovoy/Projects/qiwipanel.loc/app'
+let g:netrw_dirhist_7='/Users/kirillrogovoy/Projects/qiwipanel.loc/app/Console'

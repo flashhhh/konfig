@@ -1,4 +1,4 @@
-source ./plugins.vim
-source ./built-in.vim
-source ./look.vim
-source ./keys.vim
+source $HOME/.config/nvim/plugins.vim
+source $HOME/.config/nvim/built-in.vim
+source $HOME/.config/nvim/look.vim
+source $HOME/.config/nvim/keys.vim

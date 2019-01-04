@@ -35,6 +35,8 @@ map <leader>bo :Bonly<cr>
 " Remap VIM 0 to first non-blank character
 map 0 ^
 
+" Open Ack and put the cursor in the right position
+nnoremap <leader>g :Ack
 " When you press gv you Ack after the selected text
 vnoremap <silent> <leader>g :call VisualSelection('gv', '')<CR>
 
@@ -88,10 +90,11 @@ map gh :call LanguageClient_textDocument_hover()<CR>
 inoremap <silent><expr> <Tab>
     \ pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+" inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 inoremap <expr> <leader><Tab> deoplete#mappings#manual_complete()
 
 map <leader>p :FZF!<CR>
+let g:fzf_history_dir = '~/tmp/fzf-history'
 
 nmap <silent> }a <Plug>(ale_next_wrap)
 nmap <silent> {a <Plug>(ale_previous_wrap)

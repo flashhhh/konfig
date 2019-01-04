@@ -4,7 +4,7 @@ path="$HOME/.konfig/scripts/tmux.d/$name.tmuxrc"
 
 if !(tmux has-session -t "$name" 2> /dev/null); then
   tmux start                     \;\
-    set -g set-remain-on-exit on \;\
+    set -g remain-on-exit on \;\
     new-session -d -s $name
   tmux source-file $path
 fi

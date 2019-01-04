@@ -7,5 +7,6 @@ function fish_prompt
   else
       set -x marker ">"
   end
+  set -x marker ">"
   echo -n -s -e "\n$marker  "
 end

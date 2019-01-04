@@ -129,7 +129,11 @@ set dip=vertical
 set ttyfast
 
 set spell
-set spell spelllang=en_us
+set spell spelllang=en_us,ru_ru
+
+set keymap=russian-jcukenwin
+set iminsert=0
+set imsearch=0
 
 set clipboard=unnamed
 
