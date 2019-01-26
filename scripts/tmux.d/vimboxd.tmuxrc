@@ -1,6 +1,5 @@
 movew -t 0
 neww -n front 'cd ~/Projects/skyeng/vimbox/skyeng-frontend; and sudo yarn vimbox:server --host=vimbox.test-y62.skyeng.link --no-source-map'
 neww -n sync 'cd ~/Projects/skyeng/vimbox; and env VIM_DEV_SRV=y62 ./vimbox-developer/sync.sh'
-neww -n vpn 'echo "m6ziqznE" | sudo openconnect --user=kirill.rogovoy --passwd-on-stdin vpn.vimbox.com/ldap'
 selectw -t front
 killw -t 0

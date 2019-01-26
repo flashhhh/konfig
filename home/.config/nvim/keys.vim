@@ -82,22 +82,41 @@ map <Leader>e :NERDTreeFind<CR>
 
 let g:elm_setup_keybindings = 0
 
-map <C-]> :call LanguageClient_textDocument_definition()<CR>
-map gr :call LanguageClient_textDocument_rename()<CR>
-map gu :call LanguageClient_textDocument_references()<CR>
-map gh :call LanguageClient_textDocument_hover()<CR>
+nmap <silent> <C-]> <Plug>(coc-definition)
+nmap gr <Plug>(coc-rename)
+nmap <silent> gu <Plug>(coc-references)
+imap <C-l> <Plug>(coc-snippets-expand)
 
-inoremap <silent><expr> <Tab>
-    \ pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
-inoremap <expr> <leader><Tab> deoplete#mappings#manual_complete()
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if &filetype == 'vim'
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+" This works only if you do this:
+" https://stackoverflow.com/a/42461580/4429540
+inoremap <expr> <S-CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+imap <C-l> <Plug>(coc-snippets-expand)
 
 map <leader>p :FZF!<CR>
 let g:fzf_history_dir = '~/tmp/fzf-history'
 
-nmap <silent> }a <Plug>(ale_next_wrap)
-nmap <silent> {a <Plug>(ale_previous_wrap)
+nmap <silent> }a <Plug>(coc-diagnostic-prev)
+nmap <silent> {a <Plug>(coc-diagnostic-next)
 
 " Helper functions
 

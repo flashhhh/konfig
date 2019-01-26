@@ -10,7 +10,7 @@ set statusline+=%=
 set statusline+=%#Search#
 set statusline+=\ %l:%v/%L
 set statusline+=\ %#ErrorMsg#
-set statusline+=\ %{ale#statusline#Count(bufnr('')).error}
+set statusline+=\ %{coc#status()}
 set statusline+=\ |
 
 function! PhpSyntaxOverride()

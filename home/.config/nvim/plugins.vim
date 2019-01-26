@@ -36,9 +36,9 @@ Plug 'tpope/vim-unimpaired'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'w0rp/ale'
 Plug 'kshenoy/vim-signature'
 Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
 
 call plug#end()
 
@@ -60,16 +60,17 @@ let g:AutoPairsMoveCharacter = ""
 " Automatically close unused Fugitive buffer
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
+let g:delimitMate_expand_cr = 1
+
 let g:NERDSpaceDelims = 1
 let g:NERDCommentEmptyLines = 1
-let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_command = "goimports"
 let g:go_fmt_fail_silently = 1
 
 let g:NERDTreeQuitOnOpen = 1
 
 let g:LanguageClient_loggingFile = '/tmp/lc.txt'
-let g:LanguageClient_autoStart = 1
+let g:LanguageClient_autoStart = 0
 let g:LanguageClient_serverCommands = {
     \ 'javascript': ['typescript-language-server', '--stdio'],
     \ 'typescript': ['typescript-language-server', '--stdio'],
@@ -78,7 +79,7 @@ let g:LanguageClient_serverCommands = {
     \ 'php': ['php', '/Users/kirillrogovoy/.composer/vendor/felixfbecker/language-server/bin/php-language-server.php'],
     \ }
 
-let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_at_startup = 0
 let g:deoplete#enable_smart_case = 0
 
 call deoplete#custom#option('auto_complete_delay', 100)
@@ -97,23 +98,6 @@ let $FZF_DEFAULT_COMMAND = 'ag -g ""'
 
 let g:phpfmt_autosave = 0
 
-let g:ale_lint_on_enter = 0
-let g:ale_linters = {
-\   'javascript': ['eslint'],
-\   'typescript': ['tslint', 'tsserver', 'typecheck'],
-\   'php': ['php', 'phpstan'],
-\   'go': ['golint', 'go build', 'go type', 'go vet', 'gosimple', 'staticcheck'],
-\   'scss': ['stylelint', 'sasslint'],
-\}
-
-let g:ale_fixers = {
-\   'javascript': ['eslint'],
-\   'typescript': ['tslint'],
-\   'scss': ['stylelint'],
-\}
-let g:ale_fix_on_save = 1
-let g:ale_typescript_tsserver_use_global = 1
-let g:ale_set_loclist = 0
 let g:LanguageClient_diagnosticsEnable = 0
 
 let g:SignatureIncludeMarks = 'abcdefghijklmnopqrstuvwxyABCDEFGHIJKLMNOPQRSTUVWXYZ'
