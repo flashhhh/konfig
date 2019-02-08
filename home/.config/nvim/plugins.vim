@@ -68,6 +68,7 @@ let g:go_fmt_command = "goimports"
 let g:go_fmt_fail_silently = 1
 
 let g:NERDTreeQuitOnOpen = 1
+let g:NERDTreeWinSize=60
 
 let g:LanguageClient_loggingFile = '/tmp/lc.txt'
 let g:LanguageClient_autoStart = 0

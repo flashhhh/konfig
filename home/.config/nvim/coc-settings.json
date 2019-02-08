@@ -1,0 +1,16 @@
+{
+    "tslint.enable": false,
+    "languageserver": {
+      "bash": {
+        "command": "bash-language-server",
+        "args": ["start"],
+        "filetypes": ["sh"],
+        "ignoredRootPaths": ["~"]
+      },
+      "phplang": {
+        "command": "php",
+        "args": ["/Users/kirillrogovoy/.composer/vendor/felixfbecker/language-server/bin/php-language-server.php"],
+        "filetypes": ["php"]
+      }
+    }
+}

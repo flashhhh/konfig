@@ -85,6 +85,7 @@ let g:elm_setup_keybindings = 0
 nmap <silent> <C-]> <Plug>(coc-definition)
 nmap gr <Plug>(coc-rename)
 nmap <silent> gu <Plug>(coc-references)
+unmap <C-l>
 imap <C-l> <Plug>(coc-snippets-expand)
 
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -110,7 +111,6 @@ endfunction
 " This works only if you do this:
 " https://stackoverflow.com/a/42461580/4429540
 inoremap <expr> <S-CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-imap <C-l> <Plug>(coc-snippets-expand)
 
 map <leader>p :FZF!<CR>
 let g:fzf_history_dir = '~/tmp/fzf-history'

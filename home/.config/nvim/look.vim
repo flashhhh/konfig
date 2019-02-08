@@ -9,7 +9,7 @@ set statusline+=\ %f\ %r\ %q
 set statusline+=%=
 set statusline+=%#Search#
 set statusline+=\ %l:%v/%L
-set statusline+=\ %#ErrorMsg#
+set statusline+=\ %#StatusLineNC#
 set statusline+=\ %{coc#status()}
 set statusline+=\ |
 
