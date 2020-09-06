@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-current_branch=$(git branch | grep \* | cut -d ' ' -f2)
+current_branch=$(git branch | grep \* | cut -d ' ' -f2 | awk '{ print toupper($0) }')
 jira_task_regex="^[A-Z]+-[0-9]+$"
 git_commit_message_prefix=""
 

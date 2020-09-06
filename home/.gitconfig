@@ -10,6 +10,7 @@
     cm = "!bash ~/.konfig/scripts/git_commit.sh"
     s = status
     d = diff
+    ds = diff --staged
 [diff]
 	tool = vimdiff
 [merge]

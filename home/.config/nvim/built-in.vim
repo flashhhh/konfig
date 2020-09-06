@@ -113,6 +113,8 @@ set laststatus=2
 
 set number
 
+set updatetime=300
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Turn persistent undo on
 "    means that you can undo even when you close a buffer/VIM
@@ -128,6 +130,7 @@ set dip=vertical
 
 set ttyfast
 
+lang en_US.UTF-8
 set spell
 set spell spelllang=en_us,ru_ru
 

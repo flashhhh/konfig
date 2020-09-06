@@ -2,16 +2,17 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'vim-scripts/BufOnly.vim'
 Plug 'mileszs/ack.vim'
+Plug 'vim-scripts/dbext.vim'
 Plug 'Raimondi/delimitMate'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'ElmCast/elm-vim'
 " Plug 'mattn/emmet-vim'
 Plug 'haya14busa/incsearch.vim'
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+" Plug 'autozimu/LanguageClient-neovim', {
+    " \ 'branch': 'next',
+    " \ 'do': 'bash install.sh',
+    " \ }
 Plug 'vim-scripts/matchit.zip'
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
@@ -32,6 +33,7 @@ Plug 'xolox/vim-misc'
 Plug 'alvan/vim-php-manual'
 Plug 'beanworks/vim-phpfmt'
 Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -39,10 +41,13 @@ Plug 'junegunn/fzf.vim'
 Plug 'kshenoy/vim-signature'
 Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+Plug 'flowtype/vim-flow'
+Plug 'liuchengxu/vista.vim'
+Plug 'jxnblk/vim-mdx-js'
 
 call plug#end()
 
-let g:python3_host_prog = '/usr/local/bin/python3'
+let g:python3_host_prog = '/usr/bin/python3'
 
 " Ack! by default. Don't jump to the first result
 cnoreabbrev Ack Ack!
@@ -69,6 +74,8 @@ let g:go_fmt_fail_silently = 1
 
 let g:NERDTreeQuitOnOpen = 1
 let g:NERDTreeWinSize=60
+" autocmd BufWritePost * call g:NERDTree.ForCurrentTab().getRoot().refresh()
+autocmd BufWritePost * NERDTreeRefreshRoot
 
 let g:LanguageClient_loggingFile = '/tmp/lc.txt'
 let g:LanguageClient_autoStart = 0
@@ -95,7 +102,7 @@ let g:deoplete#sources.javascript = ['LanguageClient', 'file', 'buffer']
 let g:deoplete#sources.typescript = ['LanguageClient', 'file', 'buffer']
 
 let g:fzf_command_prefix = 'Fzf'
-let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
 
 let g:phpfmt_autosave = 0
 
@@ -103,7 +110,10 @@ let g:LanguageClient_diagnosticsEnable = 0
 
 let g:SignatureIncludeMarks = 'abcdefghijklmnopqrstuvwxyABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-augroup FiletypeGroup
-    autocmd!
-    au BufNewFile,BufRead *.tsx set filetype=typescript.jsx
-augroup END
+let g:vista_close_on_jump = 1
+let g:vista_sidebar_width = 60
+
+" augroup FiletypeGroup
+    " autocmd!
+    " au BufNewFile,BufRead *.tsx set filetype=typescript.jsx
+" augroup END

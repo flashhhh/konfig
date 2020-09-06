@@ -6,6 +6,7 @@ colorscheme solarized
 
 set statusline+=%#StatusLineNC#
 set statusline+=\ %f\ %r\ %q
+set statusline+=\ %{exists('b:coc_current_function')?b:coc_current_function:''}
 set statusline+=%=
 set statusline+=%#Search#
 set statusline+=\ %l:%v/%L
@@ -129,7 +130,7 @@ endfunction
 
 augroup TypescriptSyntaxOverride
   autocmd!
-  autocmd FileType typescript,typescriptreact call TypescriptSyntaxOverride()
+  autocmd FileType typescript,typescriptreact,typescript.jsx call TypescriptSyntaxOverride()
 augroup END
 
 hi! def link BufTabLineCurrent StatusLine
@@ -138,3 +139,5 @@ hi! def link BufTabLineActive  StatusLineNC
 hi! def link BufTabLineHidden  StatusLineNC
 
 hi! def link CursorLine StatusLineNC
+
+highlight SignColumn ctermbg=none

@@ -83,8 +83,16 @@ map <Leader>e :NERDTreeFind<CR>
 let g:elm_setup_keybindings = 0
 
 nmap <silent> <C-]> <Plug>(coc-definition)
+nmap <silent> gt <Plug>(coc-type-definition)
 nmap gr <Plug>(coc-rename)
 nmap <silent> gu <Plug>(coc-references)
+nmap gd <Plug>(coc-diagnostic-info)
+nmap <silent> go :CocList outline<CR>
+" nmap <silent> go :Vista coc<CR>
+nmap <silent> gs :CocList symbols<CR>
+nmap <silent> <Leader>f :CocFix<CR>
+nmap <silent> <Leader>lf :CocList actions -quickfix<CR>
+nmap <silent> <Leader>P :CocCommand prettier.formatFile<CR>
 unmap <C-l>
 imap <C-l> <Plug>(coc-snippets-expand)
 
@@ -117,6 +125,13 @@ let g:fzf_history_dir = '~/tmp/fzf-history'
 
 nmap <silent> }a <Plug>(coc-diagnostic-prev)
 nmap <silent> {a <Plug>(coc-diagnostic-next)
+
+xmap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap if <Plug>(coc-funcobj-i)
+omap af <Plug>(coc-funcobj-a)
+nmap <silent> <CR> <Plug>(coc-range-select)
+xmap <silent> <CR> <Plug>(coc-range-select)
 
 " Helper functions
 
